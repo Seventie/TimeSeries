@@ -17,3 +17,10 @@ This project aims to analyze and forecast electricity consumption patterns using
 * **Source:** UCI Machine Learning Repository
 * **Name:** ElectricityLoadDiagrams20112014 Data Set
 * **Characteristics:** Multivariate, Time-Series (15-min frequency, 370 attributes).
+
+### How to Download and Setup the Dataset
+Because the dataset is extremely large (~710 MB uncompressed), it is not hosted in this GitHub repository. To run the notebook locally, please follow these steps:
+1. Download the dataset `.zip` file from the official UCI repository here: **[Download Link](https://archive.ics.uci.edu/static/public/321/electricityloaddiagrams20112014.zip)** (250 MB).
+2. Extract the `.zip` file.
+3. Place the extracted `LD2011_2014.txt` file directly inside the `data/` directory of this project.
+4. Run the Jupyter Notebooks.
