@@ -1,88 +1,94 @@
-# Comprehensive Literature Review and Implementation Strategy: Time Series Forecasting in Smart Grids
+# Synthesis of Recent Advances in Multi-Horizon Time Series Forecasting and Causal Modeling
 
-## 1. Introduction and Core Papers
-This document provides a deep, comprehensive analysis of cutting-edge methodologies in multi-horizon time series forecasting, specifically focusing on residential electricity load prediction. Our review and subsequent implementation are primarily driven by recent advancements in hybrid Deep Learning architectures.
+This document provides an in-depth academic synthesis of the two primary research papers provided in `Papers/`:
+1. **Paper 1 (EAAI 2026):** *"A unified neural framework for long-term time series forecasting and granger-style causal analysis"* (MKJR Framework).
+2. **Paper 2 (Nature Sci Rep 2026):** *"CLM-former for enhancing multi-horizon time series forecasting and load prediction in smart microgrids using a robust transformer-based model"* (CLM-Former Framework).
 
-### Primary Paper Reviewed
-**Title:** "CLM-former for enhancing multi-horizon time series forecasting and load prediction in smart microgrids using a robust transformer-based model" (Identifier: PMC12867978)
-
-*(Note: While secondary literature from ScienceDirect [PII: S0952197626010845] was consulted regarding overarching AI applications in engineering, the PMC paper provides the exact architectural blueprint required to surpass traditional baseline models in our Review 2).*
+Both papers investigate long-term multivariate forecasting on the **UCI Electricity dataset** (321 clients), making them directly applicable to our project.
 
 ---
 
-## 2. The Problem Statement: Why Traditional Models Fail
-Forecasting electricity load is notoriously difficult due to the combination of strictly deterministic patterns (like weekend shutdowns) and highly stochastic, random fluctuations (like a sudden heatwave causing AC usage to spike). 
+## 1. Comparative Overview of the Two Papers
 
-Historically, forecasting relied on:
-1. **Statistical Models (ARIMA/SARIMA):** While mathematically sound, they are strictly linear. SARIMA can capture the 7-day weekly seasonality but requires thousands of parameters to model high-frequency data (like our 15-minute intervals), making it computationally infeasible for large grids. It also fails completely at predicting sudden, random, non-linear shocks.
-2. **Standard Recurrent Neural Networks (RNN/LSTM):** LSTMs are great at sequence memory, but they process data sequentially. For a sequence length of 365 days, the information from day 1 decays rapidly before it reaches day 365.
-3. **Vanilla Transformers:** Transformers use "Self-Attention" to look at all time-steps simultaneously. However, standard self-attention has an $O(L^2)$ computational complexity, which causes out-of-memory errors on long time series. Furthermore, while they capture long-term global patterns well, they are notoriously bad at capturing localized, high-frequency "bursts" of data.
-
----
-
-## 3. The Paradigm Shift: Time Series Decomposition
-The core innovation presented in the reviewed literature is that **we should not feed raw time series data into a single neural network.**
-
-Instead, the paper proposes utilizing an **Additive Decomposition** mechanism before deep processing. Any time series $X_t$ can be broken down as:
-$$ X_t = T_t + S_t + R_t $$
-Where:
-*   **$T_t$ (Trend-Cyclical Component):** The long-term progression of electricity consumption (e.g., overall consumption growing year over year).
-*   **$S_t$ (Seasonal Component):** The recurring periodic fluctuations (e.g., the 7-day drop on weekends).
-*   **$R_t$ (Residual Component):** The stochastic noise and unpredictable localized spikes.
-
-By decomposing the data, the model can route the "Trend" to a simple linear processing block, while routing the complex "Seasonality and Residuals" to a heavy Deep Learning block.
+| Dimension | Paper 1: MKJR (Elsevier EAAI 2026) | Paper 2: CLM-Former (Nature Sci Rep 2026) |
+| :--- | :--- | :--- |
+| **Primary Domain** | Long-Term Forecasting + Granger Causal Discovery | Smart Grid Multi-Horizon Electricity Demand Prediction |
+| **Core Architecture** | Mamba State Space Model (SSM) + Kolmogorov-Arnold Network (KAN) | Autoformer Transformer Backbone + CLM-subNet |
+| **Sequence Complexity** | Linear $O(L)$ via Selective State Spaces | Sub-quadratic $O(L \log L)$ via FFT Autocorrelation |
+| **Nonlinear Mapping** | Edge-learnable B-spline functions (KAN layers) | 1D-CNN + Bottleneck LSTM sub-network |
+| **Decomposition Strategy** | Variable-wise dual-stream gating (Detail vs. Global context) | Layer-wise Additive Decomposition (Trend vs. Seasonal) |
+| **Regularization Scheme** | Matrix-free Random-Projection Jacobian Regularization | Spline/recurrent dropout and early stopping |
+| **Interpretability Output** | Lag-resolved Granger causal graph via Jacobian sensitivity | Autocorrelation lag maps and gradient saliency maps |
+| **UCI Electricity MSE** | **0.162** (Multi-horizon avg) | **0.209** (Horizons: 96, 192, 336) |
 
 ---
 
-## 4. The Architecture of CLM-former
-The paper introduces the **CLM-former**, an Encoder-Decoder architecture built on top of the Autoformer backbone. It makes two massive contributions:
+## 2. In-Depth Breakdown: Paper 1 (MKJR)
 
-### A. Frequency-Domain Autocorrelation
-Instead of using standard Transformer Self-Attention (which looks for point-to-point similarities), the model uses **Autocorrelation**. It converts the time series into the frequency domain (using Fast Fourier Transforms) to find periods and delays. This allows the model to perfectly align repeating patterns (like every Monday) with an $O(L \log L)$ complexity instead of $O(L^2)$.
+### The Problem It Solves
+Traditional forecasting architectures (like vanilla Transformers, DLinear, and LSTMs) prioritize pure numerical prediction, acting as "black boxes" that cannot explain *how* or *why* different variables influence each other over time. Conversely, classical econometric causal tools (such as Vector Autoregression and Granger causality) are strictly linear and cannot scale to high dimensions or long sequences.
 
-### B. The CLM-subNet Innovation (The Convolutional-LSTM Bottleneck)
-In a standard Transformer, after attention is calculated, the data passes through a simple Feed-Forward Network (FFN). The paper proves that FFNs destroy localized temporal structures. 
-To fix this, the authors replace the FFN with a **CLM-subNet**. The seasonal component is routed through this sub-network which consists of:
-1.  **1D-CNN (Convolutional Neural Network):** The CNN acts as a high-frequency filter. It slides across the seasonal data and extracts localized, aperiodic fluctuations (short-term spikes).
-2.  **LSTM (Long Short-Term Memory):** The output of the CNN (the localized features) is immediately fed into an LSTM. The LSTM's memory gates learn the sequential dependencies of those extracted spikes.
-
-**Why this is brilliant:** It creates cross-domain synergy. The Autocorrelation block handles the global, long-term frequencies, while the CLM-subNet handles the local, short-term time-domain shocks.
-
----
-
-## 5. Practical Implementation Strategy (Review 2)
-To prove our mastery of this literature, we did not just summarize it—**we implemented its core architecture in PyTorch for Review 2.**
-
-While training a full multi-layer Transformer from scratch on a laptop is computationally prohibitive for a baseline review, the true genius of the paper lies in the **CLM-subNet**. Therefore, we isolated this CNN-LSTM hybrid architecture and built it as our primary Deep Learning model.
-
-### Our PyTorch Architecture Flow:
-1.  **Data Ingestion:** We feed a rolling lookback window of 14 days of scaled electricity load into the network.
-2.  **Feature Extraction (`nn.Conv1d`):** 
-    *   We pass the sequence through a 1D Convolutional layer with a kernel size of 3. 
-    *   This acts exactly like the paper's CNN layer, extracting high-frequency local variations (sudden load changes) and compressing them via MaxPooling.
-3.  **Sequential Modeling (`nn.LSTM`):** 
-    *   The compressed feature maps are fed into an LSTM with 64 hidden units. 
-    *   The LSTM models the temporal evolution of the CNN's features, capturing the underlying rules of how sudden spikes resolve over time.
-4.  **Recombination (`nn.Linear`):** 
-    *   The final hidden state of the LSTM is projected through a Dense fully-connected layer to output the precise $t+1$ load forecast.
+### Exact Architectural Design:
+1. **Reversible Instance Normalization (RevIN):** Normalizes inputs dynamically per window to prevent distribution shifts, removing non-stationarity before feeding to layers.
+2. **KAN Encoder-Decoder:**
+   * Instead of standard MLPs with fixed activations ($\text{ReLU}(Wx)$), KANs place **learnable B-splines directly on the network edges**.
+   * The first KAN encoder extracts an **encoder-side source-lag structural prior** ($\pi_{i,\alpha}$), mathematically determining which historical lag $\alpha$ of variable $i$ retains predictive signal.
+3. **Asymmetric Bidirectional Dual-Stream Mamba Backbone:**
+   * Uses Mamba State-Space Models (SSMs) to achieve $O(L)$ linear scaling.
+   * **Detail Stream:** Processes high-dimensional latent tokens modulated by local temporal signatures (extracted with a kernel size 3 1D-CNN) *without* residual connections to retain sharp local shocks.
+   * **Global Stream:** Processes compressed tokens modulated by global channel pooling *with* a residual connection to preserve coarse multi-variable context.
+   * Employs bidirectional forward and backward scanning for comprehensive temporal context.
+4. **Matrix-Free Random-Projection Jacobian Regularization:**
+   * Penalizes excessive model sensitivity without computing the full $O(M^2 L T)$ dense Jacobian matrix.
+   * Uses Hutchinson-style random probes ($v \sim \mathcal{N}(0, I)$ and Rademacher $p \sim \pm 1$) to regularize directional gradients:
+     $$\mathcal{L} = \text{MSE} + \lambda_{sens} R_{sens} + \lambda_{str} R_{str}$$
+5. **Granger Causal Graph Recovery:**
+   * At inference time, combines the KAN structural prior ($\pi_{i,\alpha}$) with the absolute input-output Jacobian sensitivity to produce continuous causal scores.
+   * Runs circular permutation surrogate tests with Benjamini-Hochberg False Discovery Rate (FDR) control to extract an interpretable causal adjacency matrix.
 
 ---
 
-## 6. Evaluation Metrics and Baseline Comparisons
-To rigorously validate our CNN-LSTM implementation against standard industry practices, we evaluate all models using three strict mathematical metrics:
+## 3. In-Depth Breakdown: Paper 2 (CLM-Former)
 
-1.  **MAE (Mean Absolute Error):** Measures the average magnitude of errors without considering their direction.
-    $$ MAE = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i| $$
-2.  **RMSE (Root Mean Squared Error):** Heavily penalizes large forecasting errors (which is critical in power grids where a massive underestimation causes a blackout).
-    $$ RMSE = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2} $$
-3.  **MAPE (Mean Absolute Percentage Error):** Provides a relative percentage of error, making it easy to explain to non-technical stakeholders.
+### The Problem It Solves
+State-of-the-art Transformers (such as Autoformer) excel at detecting broad periodic cycles via frequency-domain autocorrelation. However, they route the seasonal component through point-wise Feed-Forward Networks (FFNs). Point-wise FFNs compute transformations independently at each timestamp, which completely destroys local temporal dependencies and prevents the model from predicting abrupt, aperiodic load surges (e.g., unexpected factory spikes or heatwave peaks).
 
-### Expected Results Breakdown:
-*   **ARIMA:** Will act as our lowest baseline. Because it cannot handle $m=7$ seasonality inherently without exploding parameters, its MAE will be the highest.
-*   **SARIMA:** Will perfectly map the weekend drops, significantly lowering the MAPE. However, it will fail to predict irregular spikes on weekdays.
-*   **XGBoost:** Will outperform the statistical models by utilizing lag features (Lag_1, Lag_7) and calendar metadata, but as a tree-based model, it will fail to extrapolate if the overall trend shifts higher than the training data.
-*   **CNN-LSTM Hybrid:** Expected to achieve the lowest RMSE by combining the CNN's ability to react to sudden localized shocks and the LSTM's ability to maintain long-term sequential stability, directly validating the findings of the PMC paper.
+### Exact Architectural Design:
+1. **Multi-Scale Additive Series Decomposition:**
+   * At every layer of both the encoder and decoder, the series is decomposed:
+     $$X_t = \text{AvgPooling}(\text{Padding}(X)), \quad X_s = X - X_t$$
+   * The **Trend component ($X_t$)** is accumulated linearly across layers.
+   * The **Seasonal component ($X_s$)** is processed by attention and the CLM-subNet.
+2. **Frequency-Domain Autocorrelation Mechanism:**
+   * Uses Fast Fourier Transforms (FFT) to compute sequence similarities at periodic lag offsets:
+     $$\tau_1, \dots, \tau_k = \text{argTopK}(\mathcal{R}_{Q,K}(\tau)), \quad k = \lfloor \log(L) \rfloor$$
+   * Reduces computational complexity from quadratic $O(L^2)$ to efficient $O(L \log L)$.
+3. **The CLM-subNet Innovation:**
+   * Replaces the point-wise FFN in the Autoformer block with a **CNN-LSTM sub-network**.
+   * **Two 1D-CNN Layers:** Act as localized high-frequency filters, scanning the seasonal sequence to detect abrupt peaks and drops.
+   * **Bottleneck LSTM Layer:** Takes the CNN feature maps and compresses them to $64$ hidden units. Models the temporal progression of the extracted spikes.
+   * **Efficiency Benefit:** Because the LSTM acts as a bottleneck ($d_{model} = 512 \to 64 \to 512$), CLM-Former actually has **fewer total parameters (33.96M)** than the official Autoformer (34.62M)!
+4. **Decoder and Prediction Aggregation:**
+   * The decoder refines the seasonal tokens using Cross-Autocorrelation with the encoder output, then applies the CLM-subNet.
+   * The final prediction is generated by adding the projected seasonal output directly to the accumulated trend:
+     $$\hat{X}_{pred} = w_s S_{de}^M + T_{de}^M$$
 
 ---
-**Conclusion for Review 2:** 
-By translating the theoretical CLM-subNet architecture from recent 2025/2026 literature into a functional PyTorch model, we successfully bridge the gap between academic research and practical, deployable electricity load forecasting.
+
+## 4. Key Lessons Learned and Practical Application for Review 2
+
+### What the Literature Teaches Us:
+1. **Decomposition is Non-Negotiable:** Raw power grid load must never be fed as an undivided sequence into deep networks. Trend (slow drift) and Seasonality (rapid oscillations) must be decomposed and handled by separate sub-modules.
+2. **Hybrid Local-Global Architectures Win:** Pure attention captures global rhythm but misses local shocks; pure CNN/LSTM captures local spikes but struggles with long horizons. A hybrid that pairs attention/Mamba with CNN-LSTM achieves peak accuracy.
+3. **Bottleneck Compressions Improve Efficiency:** Compressing intermediate representations before sequential recurrence (e.g., hidden size 64) prevents overfitting and lowers parameter count.
+
+### Practical Replication in Our Codebase (`notebooks/02_Review2_Modeling_and_Forecasting.ipynb`):
+To bridge the gap between academic theory and practical demonstration for Review 2, we replicated these architectural principles directly:
+1. **Statistical Baselines:**
+   * **ARIMA(1,1,1):** Baseline linear model without seasonal adaptation.
+   * **SARIMA(1,1,1)x(1,0,1,7):** Incorporates the 7-day cyclical periodicity identified during our EDA.
+2. **Machine Learning Baseline:**
+   * **XGBoost:** Uses 7-day lookback lag features and calendar indicators.
+3. **Deep Learning Innovation (CLM-subNet Architecture):**
+   * Built in PyTorch using a **1D-CNN feature extractor** (`nn.Conv1d`, kernel size 3) connected to a **Bottleneck LSTM** (`nn.LSTM`, hidden size 64) and a linear projection head.
+   * Evaluated across test horizons using strict metrics (**MAE**, **RMSE**, **MAPE**) to benchmark traditional statistical models against modern hybrid deep learning.
