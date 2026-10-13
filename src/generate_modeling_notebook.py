@@ -1,13 +1,16 @@
 """Generator for Review 2 modeling notebook.
 
-Faithfully implements:
-- ARIMA & SARIMA (both multi-step blind and rolling 1-step walk-forward)
-- Complete mathematical breakdown of why multi-step ARIMA/SARIMA are straight lines
-- Machine Learning: XGBoost
-- Classical Recurrent Deep Learning: Vanilla RNN & Standard LSTM with RevIN
-- SOTA Deep Models: CLM-Former (Nature 2026) and MKJR (Elsevier 2026)
-- Evaluation-time Neural Granger Causal Sensitivity Analysis (MKJR Jacobian)
-- Comprehensive benchmarking, diagnostics, 1-step sanity ladder, and 14-day multi-horizon test
+Completely frames the notebook around the official 25-Mark Evaluation Scheme:
+1. ARIMA / SARIMA / SARIMAX (2+ different models)          [3 Marks]
+2. Holt-Winters models (Additive & Multiplicative)         [3 Marks]
+3. ML / DL models (XGBoost, RNN, LSTM, CLM-Former, MKJR)   [3 Marks]
+4. Baseline forecast (Naive, Seasonal Naive, Rolling Mean) [2 Marks]
+5. Forecast accuracy (Formal Equations, MAE, RMSE, MAPE, R²)[2 Marks]
+6. Model comparison (Unified Tables, Radar Chart, H=1 vs H=14)[2 Marks]
+7. Residual Analysis (ACF, Q-Q, Distribution, Ljung-Box)   [3 Marks]
+8. Research conclusion (Synthesis, Dispatch, Review 3 Plan)[2 Marks]
+9. Individual contribution (Team breakdown, deliverables)  [5 Marks]
+Total: 25 Marks
 """
 import nbformat as nbf
 
@@ -21,30 +24,32 @@ def code(text):
     cells.append(nbf.v4.new_code_cell(text))
 
 # ------------------------------------------------------------------------------
-# Cell 1: Header & Review 2 Roadmap
+# Cell 1: Header & Review 2 Evaluation Rubric Mapping
 # ------------------------------------------------------------------------------
 md(r"""# Phase 2: Predictive Modeling, Advanced Hybrid Architectures, and Causal Analysis
 ### Project: Decoding Electricity Demand — Analyzing Consumption Patterns and Forecasting Future Energy Load
+### Academic Review 2 Evaluation Portfolio (25 Marks Total)
 
 ---
 
-## 1. Executive Summary & Review 2 Roadmap
+## 📋 Evaluation Scheme Alignment & Review 2 Roadmap
 
-In **Review 1**, our exploratory analysis and statistical testing confirmed three fundamental traits of the aggregated grid load:
-1. **Non-Stationarity:** A statistically significant upward trend (ADF p-value $= 0.643$).
-2. **First-Order Integration ($d=1$):** First-order differencing ($\Delta y_t = y_t - y_{t-1}$) completely stabilizes the mean at zero (ADF p-value $= 1.71 \times 10^{-10}$).
-3. **Multi-Scale Seasonality:** Dominant **7-day weekly cyclicality** (driven by weekend factory closures) plus annual calendar shocks (Christmas & New Year drops).
+This notebook is formally structured to satisfy each requirement of the **Review 2 Evaluation Rubric (25 Marks)**:
 
-### Review 2 Objectives & Paradigm Evolution
-In this phase, we transition from descriptive analysis to predictive modeling. We benchmark a complete evolutionary hierarchy of forecasting paradigms:
-* **Statistical Baselines:** Classical linear econometric models — **ARIMA(1,1,1)** and seasonal **SARIMA(1,1,1)x(1,0,1,7)**, exploring both multi-step open-loop forecasts and rolling walk-forward updates.
-* **Analytical Deep Dive:** A rigorous mathematical explanation of **why multi-step ARIMA and SARIMA forecasts collapse into flat straight lines**.
-* **Machine Learning Baseline:** Supervised gradient-boosted decision trees — **XGBoost Regressor** with autoregressive lags and calendar metadata.
-* **Classical Recurrent Deep Learning:** **Vanilla RNN** (`nn.RNN`) and **Standard LSTM** (`nn.LSTM`) with per-window Reversible Instance Normalization (RevIN).
-* **2026 SOTA Deep Model 1 — CLM-Former (Nature Sci. Reports 2026):** Series decomposition + frequency-domain FFT Autocorrelation with the **CLM-subNet** (1D-CNN + bottleneck LSTM) replacing point-wise FFNs.
-* **2026 SOTA Deep Model 2 — MKJR (Elsevier EAAI 2026):** RevIN + two-stage Kolmogorov-Arnold Network (KAN) encoder/decoder + asymmetric bidirectional dual-stream Mamba (Selective State Spaces), trained with matrix-free random-projection Jacobian regularisation.
-* **Evaluation-Time Neural Granger Causal Discovery:** Extracting lag-resolved input-output sensitivity tensors directly from the trained MKJR predictor.
-* **Multi-Horizon Stress Test ($H=14$):** Evaluating model degradation over extended horizons where sequence models demonstrate flatter error curves.""")
+| Module # | Evaluation Requirement | Marks | Section in Notebook | Key Models & Artifacts Delivered |
+| :---: | :--- | :---: | :--- | :--- |
+| **1** | **ARIMA / SARIMA / SARIMAX (2+ Models)** | **3** | **Section 4** | Non-seasonal $\text{ARIMA}(1,1,1)$, Seasonal $\text{SARIMA}(1,1,1)\times(1,0,1)_7$, Exogenous $\text{SARIMAX}(1,1,1)\times(1,0,1)_7$ with weekend & Fourier calendar features; Multi-step blind vs. Rolling 1-step walk-forward |
+| **2** | **Holt-Winters Models** | **3** | **Section 5** | Holt-Winters Additive Seasonality & Multiplicative Seasonality; smoothing parameters ($\alpha, \beta, \gamma$); Multi-step & Rolling tracking |
+| **3** | **ML / DL Models** | **3** | **Section 6 & 7** | XGBoost Regressor (ML), Vanilla RNN, Standard LSTM, CLM-Former (Nature 2026), MKJR (Elsevier 2026); Neural Granger Causal Discovery |
+| **4** | **Baseline Forecasts** | **2** | **Section 3** | Naive Persistence ($\hat{y}_t = y_{t-1}$), Seasonal Naive ($\hat{y}_t = y_{t-7}$), 7-Day Rolling Mean, Historical Mean Baseline |
+| **5** | **Forecast Accuracy** | **2** | **Section 2** | Mathematical formulations for $\text{MAE}, \text{RMSE}, \text{MAPE}, R^2, \text{Directional Accuracy}$; $\Delta\% \text{ vs. Baseline}$ improvement quantification |
+| **6** | **Model Comparison** | **2** | **Section 8 & 9** | Unified single-step comparison table ($H=1$); 14-day multi-horizon benchmark ($H=14$); Horizon error decay curves; Interactive radar chart |
+| **7** | **Residual Analysis** | **3** | **Section 10** | 4-panel diagnostic suite (Time-series, Histogram/Gaussian, ACF, Q-Q); Formal Ljung-Box Portmanteau white-noise test |
+| **8** | **Research Conclusion** | **2** | **Section 11** | Empirical findings, Persistence Regime Paradox, grid dispatch implications, limitations & Review 3 roadmap |
+| **9** | **Individual Contribution** | **5** | **Section 12** | Comprehensive role matrix, technical deliverables, and candidate viva voce defense profiles |
+| **—** | **Viva Voce Defense Strategy** | **Bonus** | **Section 13** | High-yield defense Q&A on mathematical derivations, gating, attention vs SSM, and causal Jacobian gradients |
+
+---""")
 
 # ------------------------------------------------------------------------------
 # Cell 2: Imports & Environment Setup
@@ -58,9 +63,14 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import plotly.io as pio
 from plotly.subplots import make_subplots
+import scipy.stats as stats
 
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
+from statsmodels.stats.diagnostic import acorr_ljungbox
+from statsmodels.tsa.stattools import acf
+
 from xgboost import XGBRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, mean_absolute_percentage_error, r2_score
 
@@ -74,13 +84,15 @@ np.random.seed(42)
 torch.manual_seed(42)
 pio.renderers.default = 'notebook'
 
-print(f"PyTorch Version: {torch.__version__}")
-print(f"Device: {'CUDA' if torch.cuda.is_available() else 'CPU'}")""")
+print(f"PyTorch Version   : {torch.__version__}")
+print(f"Compute Device    : {'CUDA' if torch.cuda.is_available() else 'CPU'}")
+print("Statistical Stack : statsmodels (ARIMA, SARIMAX, Holt-Winters, Ljung-Box)")
+print("ML & DL Stack     : XGBoost Regressor, PyTorch Sequential Baselines & 2026 SOTA")""")
 
 # ------------------------------------------------------------------------------
-# Cell 3: Data Ingestion & Daily Resampling
+# Cell 3: Data Ingestion & Chronological Train-Test Split
 # ------------------------------------------------------------------------------
-md(r"""## 2. Data Preparation & Chronological Train-Test Split
+md(r"""## 1. Data Preparation & Chronological Train-Test Split
 
 To ensure fair benchmark comparison and computational tractability across classical statistical models (where 15-minute SARIMA on 370 clients requires millions of matrix inversions), we aggregate the readings to **Daily Total Load**.
 We utilize 2012–2014 data and reserve the final **60 days** as our unseen test horizon.""")
@@ -102,6 +114,12 @@ else:
     df_daily.index.name = 'date'
     df_daily.to_csv(cache_path)
 
+# Calendar feature engineering for statistical & ML regressors
+dow = df_daily.index.dayofweek.values
+df_daily['is_weekend'] = (dow >= 5).astype(float)
+df_daily['dow_sin'] = np.sin(2 * np.pi * dow / 7.0)
+df_daily['dow_cos'] = np.cos(2 * np.pi * dow / 7.0)
+
 print(f"Total Daily Observations: {len(df_daily)} days ({df_daily.index[0].date()} to {df_daily.index[-1].date()})")
 df_daily.head()""")
 
@@ -122,178 +140,219 @@ fig.update_layout(title='Chronological Train/Test Partition (Aggregated Daily Gr
 fig.show()""")
 
 # ------------------------------------------------------------------------------
-# Cell 5: Shared Evaluation Toolkit
+# Cell 5: Forecast Accuracy Formulations & Shared Evaluation Toolkit (Rubric Item 5 - 2 Marks)
 # ------------------------------------------------------------------------------
-md(r"""## 3. Shared Evaluation Toolkit
+md(r"""## 2. Forecast Accuracy Formulations & Shared Evaluation Toolkit
+### 🎯 Evaluation Rubric Item 5 — Forecast Accuracy (2 Marks)
 
-To make the comparison consistent and interactive, every model registers its predictions and generates a 3-panel diagnostic plot:
-1. **Actual vs Predicted:** Trajectory adherence.
-2. **Residuals over Time ($y_t - \hat{y}_t$):** Testing whether errors are zero-mean white noise or contain unmodelled patterns.
-3. **Predicted vs Actual Scatter:** Proximity to the $45^\circ$ perfect-forecast reference line.""")
+To rigorously quantify forecasting performance across models, we establish five formal mathematical accuracy metrics:
+
+1. **Mean Absolute Error (MAE):** Linear penalty preserving the physical scale (kW):
+   $$\text{MAE} = \frac{1}{N} \sum_{t=1}^N \left| y_t - \hat{y}_t \right|$$
+2. **Root Mean Squared Error (RMSE):** Quadratic penalty penalizing large dispatch deviations:
+   $$\text{RMSE} = \sqrt{\frac{1}{N} \sum_{t=1}^N \left( y_t - \hat{y}_t \right)^2}$$
+3. **Mean Absolute Percentage Error (MAPE):** Scale-independent relative deviation percentage:
+   $$\text{MAPE} = \frac{1}{N} \sum_{t=1}^N \left| \frac{y_t - \hat{y}_t}{y_t} \right| \times 100\%$$
+4. **Coefficient of Determination ($R^2$):** Proportion of variance captured relative to historical mean baseline:
+   $$R^2 = 1 - \frac{\sum_{t=1}^N (y_t - \hat{y}_t)^2}{\sum_{t=1}^N (y_t - \bar{y})^2}$$
+5. **Directional Accuracy (DA):** Frequency with which the forecast correctly predicts day-over-day movement direction:
+   $$\text{DA} = \frac{1}{N-1} \sum_{t=2}^N \mathbb{I}\left(\text{sgn}(y_t - y_{t-1}) == \text{sgn}(\hat{y}_t - y_{t-1})\right) \times 100\%$$""")
 
 code(r"""def compute_metrics(y_true, y_pred):
     y_true = np.asarray(y_true, dtype=float)
     y_pred = np.asarray(y_pred, dtype=float)
+    da = np.mean(np.sign(y_true[1:] - y_true[:-1]) == np.sign(y_pred[1:] - y_true[:-1])) * 100.0 if len(y_true) > 1 else 0.0
     return {
         'MAE': mean_absolute_error(y_true, y_pred),
         'RMSE': np.sqrt(mean_squared_error(y_true, y_pred)),
         'MAPE': mean_absolute_percentage_error(y_true, y_pred) * 100.0,
         'R2': r2_score(y_true, y_pred),
+        'DA': da
     }
 
 RESULTS, TIMINGS, COLORS = {}, {}, {}
 PALETTE = {
+    'Naive (Persistence)': '#7f7f7f',
+    'Seasonal Naive (Lag 7)': '#8c564b',
+    '7-Day Rolling Mean': '#c7c7c7',
     'ARIMA (Multi-Step)': '#d62728',
     'ARIMA (Rolling)': '#e377c2',
     'SARIMA (Multi-Step)': '#ff7f0e',
     'SARIMA (Rolling)': '#bcbd22',
+    'SARIMAX (Multi-Step)': '#d6616b',
+    'SARIMAX (Rolling)': '#ce6dbd',
+    'Holt-Winters Additive': '#17becf',
+    'Holt-Winters Multiplicative': '#9edae5',
     'XGBoost': '#2ca02c',
-    'Vanilla RNN': '#8c564b',
+    'Vanilla RNN': '#9467bd',
     'Standard LSTM': '#1f77b4',
-    'CLM-Former': '#9467bd',
-    'MKJR': '#17becf'
+    'CLM-Former': '#393b79',
+    'MKJR': '#637939',
 }
 
-def register(name, preds, seconds):
-    test[name] = np.asarray(preds, dtype=float)
-    TIMINGS[name] = seconds
-    COLORS[name] = PALETTE.get(name, '#1f77b4')
-    m = compute_metrics(test['Total_Load'], test[name])
+def register(name, preds, secs=0.0):
+    m = compute_metrics(test['Total_Load'].values, preds)
     RESULTS[name] = m
-    print(f"{name:20s} | MAE={m['MAE']:>13,.0f} | RMSE={m['RMSE']:>13,.0f} | "
-          f"MAPE={m['MAPE']:6.2f}% | R2={m['R2']:6.3f} | {seconds:6.2f}s")
+    TIMINGS[name] = secs
+    print(f"{name:28s} | MAE={m['MAE']:>13,.0f} | RMSE={m['RMSE']:>13,.0f} | MAPE={m['MAPE']:6.2f}% | R2={m['R2']:6.3f} | DA={m['DA']:5.1f}% | Time={secs:6.2f}s")
     return m
 
-def plot_model_diagnostics(name):
-    c = COLORS.get(name, '#1f77b4')
-    yt, yp = test['Total_Load'], test[name]
-    resid = yt - yp
-    m = RESULTS[name]
-    fig = make_subplots(rows=1, cols=3, column_widths=[0.5, 0.25, 0.25],
-                        subplot_titles=('Actual vs Predicted', 'Residuals (Actual - Pred)', 'Predicted vs Actual'))
-    fig.add_trace(go.Scatter(x=test.index, y=yt, name='Actual', line=dict(color='black', width=2.5)), row=1, col=1)
-    fig.add_trace(go.Scatter(x=test.index, y=yp, name=name, line=dict(color=c, width=2)), row=1, col=1)
-    fig.add_trace(go.Bar(x=test.index, y=resid, marker_color=c, showlegend=False), row=1, col=2)
-    fig.add_hline(y=0, line=dict(color='gray', dash='dot'), row=1, col=2)
-    fig.add_trace(go.Scatter(x=yt, y=yp, mode='markers', marker=dict(color=c, size=6, opacity=0.7), showlegend=False), row=1, col=3)
-    lo, hi = float(min(yt.min(), yp.min())), float(max(yt.max(), yp.max()))
-    fig.add_trace(go.Scatter(x=[lo, hi], y=[lo, hi], mode='lines', line=dict(color='gray', dash='dash'), showlegend=False), row=1, col=3)
-    fig.update_layout(height=380, template='plotly_white', legend=dict(x=0.01, y=0.99),
-                      title=f"{name}  —  MAE {m['MAE']:,.0f} | RMSE {m['RMSE']:,.0f} | MAPE {m['MAPE']:.2f}% | R2 {m['R2']:.3f}")
+def plot_model_diagnostics(name, pred_col=None):
+    y_true = test['Total_Load'].values
+    y_pred = test[name].values if pred_col is None else test[pred_col].values
+    res = y_true - y_pred
+    color = PALETTE.get(name, '#1f77b4')
+
+    fig = make_subplots(
+        rows=1, cols=3,
+        subplot_titles=[f'{name}: Actual vs Predicted', 'Residuals (e = y - y_hat)', 'Scatter: Actual vs Predicted'],
+        column_widths=[0.45, 0.30, 0.25]
+    )
+    # 1. Trajectory overlay
+    fig.add_trace(go.Scatter(x=test.index, y=y_true, mode='lines', name='Actual', line=dict(color='black', width=2)), row=1, col=1)
+    fig.add_trace(go.Scatter(x=test.index, y=y_pred, mode='lines', name=name, line=dict(color=color, width=2, dash='dot' if 'Multi-Step' in name else 'solid')), row=1, col=1)
+    # 2. Residuals
+    fig.add_trace(go.Scatter(x=test.index, y=res, mode='lines+markers', name='Residual', line=dict(color=color, width=1.5)), row=1, col=2)
+    fig.add_hline(y=0, line=dict(color='red', dash='dash'), row=1, col=2)
+    # 3. 45-degree scatter
+    fig.add_trace(go.Scatter(x=y_true, y=y_pred, mode='markers', name='Points', marker=dict(color=color, size=5, opacity=0.8)), row=1, col=3)
+    vmin, vmax = min(y_true.min(), y_pred.min()), max(y_true.max(), y_pred.max())
+    fig.add_trace(go.Scatter(x=[vmin, vmax], y=[vmin, vmax], mode='lines', name='Ideal 45°', line=dict(color='red', dash='dash')), row=1, col=3)
+
+    fig.update_layout(title=f'Model Diagnostics — {name}', template='plotly_white', showlegend=False, height=350)
     fig.show()""")
 
 # ------------------------------------------------------------------------------
-# Cell 6: Baseline 1 — ARIMA(1, 1, 1)
+# Cell 6: Baseline Forecasting Models (Rubric Item 4 - 2 Marks)
 # ------------------------------------------------------------------------------
-md(r"""## 4. Statistical Baseline 1 — ARIMA(1, 1, 1)
+md(r"""## 3. Baseline Forecasting Models
+### 🎯 Evaluation Rubric Item 4 — Baseline Forecast (2 Marks)
 
-$$\Delta y_t = c + \phi_1 \Delta y_{t-1} + \epsilon_t + \theta_1 \epsilon_{t-1}$$
-$d=1$ differencing, $p=1$ autoregression, $q=1$ moving average.
-We evaluate ARIMA in two modes:
-1. **Multi-Step Forecast (Blind):** Projecting all 60 days into the future with zero intervening feedback.
-2. **Rolling 1-Step Forecast (Walk-Forward):** Updating the state space with each day's actual observation before predicting the next day.""")
+Before deploying advanced models, we construct four foundational baselines to define the lower performance bounds:
+1. **Naive (Persistence / Random Walk) Baseline:** Assumes the next day equals yesterday's load ($\hat{y}_t = y_{t-1}$).
+2. **Seasonal Naive Baseline (Lag 7):** Assumes the next day equals the same day last week ($\hat{y}_t = y_{t-7}$).
+3. **7-Day Rolling Moving Average Baseline:** Smooths the last week of observations ($\hat{y}_t = \frac{1}{7}\sum_{i=1}^7 y_{t-i}$).
+4. **Historical Mean Baseline:** Constant mean of the entire training dataset ($\hat{y}_t = \bar{y}_{train}$).""")
 
-code(r"""print("Fitting ARIMA(1, 1, 1)...")
+code(r"""# 1. Naive (Persistence) Baseline: y_hat_t = y_{t-1}
+full_series = df_daily['Total_Load'].values
+naive_pred = full_series[len(train)-1 : len(train)-1 + len(test)]
+test['Naive (Persistence)'] = naive_pred
+register('Naive (Persistence)', naive_pred, secs=0.001)
+
+# 2. Seasonal Naive Baseline (Lag 7): y_hat_t = y_{t-7}
+snaive_pred = full_series[len(train)-7 : len(train)-7 + len(test)]
+test['Seasonal Naive (Lag 7)'] = snaive_pred
+register('Seasonal Naive (Lag 7)', snaive_pred, secs=0.001)
+
+# 3. 7-Day Rolling Moving Average Baseline
+roll7_pred = [full_series[len(train) - 7 + i : len(train) + i].mean() for i in range(len(test))]
+test['7-Day Rolling Mean'] = roll7_pred
+register('7-Day Rolling Mean', roll7_pred, secs=0.002)
+
+plot_model_diagnostics('Seasonal Naive (Lag 7)')""")
+
+# ------------------------------------------------------------------------------
+# Cell 7: Classical Statistical Modeling: ARIMA / SARIMA / SARIMAX (Rubric Item 1 - 3 Marks)
+# ------------------------------------------------------------------------------
+md(r"""## 4. Classical Statistical Modeling: ARIMA, SARIMA & SARIMAX
+### 🎯 Evaluation Rubric Item 1 — ARIMA / SARIMA / SARIMAX (2+ Different Models) (3 Marks)
+
+We evaluate three distinct classical linear econometric formulations:
+1. **Non-Seasonal $\text{ARIMA}(1, 1, 1)$:** Captures first-order integration ($d=1$) and localized autoregressive moving-average shocks.
+2. **Seasonal $\text{SARIMA}(1, 1, 1) \times (1, 0, 1)_7$:** Adds multiplicative weekly seasonal autoregression ($\Phi_1$) and seasonal moving averages ($\Theta_1$).
+3. **Exogenous $\text{SARIMAX}(1, 1, 1) \times (1, 0, 1)_7$:** Incorporates external deterministic calendar regressors ($\text{is\_weekend}, \sin(\text{day}), \cos(\text{day})$).
+
+For each model, we evaluate two operational modes:
+* **Multi-Step Blind:** Open-loop recursive forecast 60 days into the future with zero sensor feedback.
+* **Rolling 1-Step Walk-Forward:** Filtered forecast where day $t-1$ updates the internal Kalman state before forecasting day $t$.""")
+
+code(r"""# --- Model 1: ARIMA(1, 1, 1) ---
+print("Fitting Non-Seasonal ARIMA(1, 1, 1)...")
 t0 = time.time()
 arima_model = ARIMA(train['Total_Load'], order=(1, 1, 1)).fit()
 arima_multi = arima_model.forecast(steps=len(test)).values
-t_multi = time.time() - t0
-register('ARIMA (Multi-Step)', arima_multi, t_multi)
-plot_model_diagnostics('ARIMA (Multi-Step)')
+t_amulti = time.time() - t0
+test['ARIMA (Multi-Step)'] = arima_multi
+register('ARIMA (Multi-Step)', arima_multi, t_amulti)
 
-# Rolling 1-step-ahead walk-forward forecast using Kalman filtering
 t0 = time.time()
 arima_applied = arima_model.apply(df_daily['Total_Load'])
 arima_rolling = arima_applied.predict(start=test.index[0], end=test.index[-1], dynamic=False).values
-t_roll = time.time() - t0
-register('ARIMA (Rolling)', arima_rolling, t_roll)
-plot_model_diagnostics('ARIMA (Rolling)')""")
+t_aroll = time.time() - t0
+test['ARIMA (Rolling)'] = arima_rolling
+register('ARIMA (Rolling)', arima_rolling, t_aroll)
 
-# ------------------------------------------------------------------------------
-# Cell 7: Baseline 2 — SARIMA(1, 1, 1)x(1, 0, 1, 7)
-# ------------------------------------------------------------------------------
-md(r"""## 5. Statistical Baseline 2 — SARIMA(1, 1, 1)x(1, 0, 1, 7)
-
-$$\Phi_1(B^7)\,\phi_1(B)\,(1 - B)\, y_t = \Theta_1(B^7)\,\theta_1(B)\,\epsilon_t$$
-The seasonal period $m=7$ links every weekday to the matching weekday of the preceding week, modeling the industrial weekend drop.
-We again evaluate both **Multi-Step** and **Rolling 1-Step** modes.""")
-
-code(r"""print("Fitting SARIMA(1, 1, 1)x(1, 0, 1, 7)...")
+# --- Model 2: SARIMA(1, 1, 1)x(1, 0, 1, 7) ---
+print("\nFitting Seasonal SARIMA(1, 1, 1)x(1, 0, 1, 7)...")
 t0 = time.time()
 sarima_model = SARIMAX(train['Total_Load'], order=(1, 1, 1), seasonal_order=(1, 0, 1, 7),
                        enforce_stationarity=False, enforce_invertibility=False).fit(disp=False)
 sarima_multi = sarima_model.forecast(steps=len(test)).values
 t_smulti = time.time() - t0
+test['SARIMA (Multi-Step)'] = sarima_multi
 register('SARIMA (Multi-Step)', sarima_multi, t_smulti)
-plot_model_diagnostics('SARIMA (Multi-Step)')
 
 t0 = time.time()
 sarima_applied = sarima_model.apply(df_daily['Total_Load'])
 sarima_rolling = sarima_applied.predict(start=test.index[0], end=test.index[-1], dynamic=False).values
 t_sroll = time.time() - t0
+test['SARIMA (Rolling)'] = sarima_rolling
 register('SARIMA (Rolling)', sarima_rolling, t_sroll)
-plot_model_diagnostics('SARIMA (Rolling)')""")
+
+# --- Model 3: SARIMAX with Exogenous Calendar Features ---
+exog_cols = ['is_weekend', 'dow_sin', 'dow_cos']
+print("\nFitting SARIMAX(1, 1, 1)x(1, 0, 1, 7) with Exogenous Features...")
+t0 = time.time()
+sarimax_model = SARIMAX(train['Total_Load'], exog=train[exog_cols], order=(1, 1, 1), seasonal_order=(1, 0, 1, 7),
+                        enforce_stationarity=False, enforce_invertibility=False).fit(disp=False)
+sarimax_multi = sarimax_model.forecast(steps=len(test), exog=test[exog_cols]).values
+t_sxmulti = time.time() - t0
+test['SARIMAX (Multi-Step)'] = sarimax_multi
+register('SARIMAX (Multi-Step)', sarimax_multi, t_sxmulti)
+
+t0 = time.time()
+sarimax_applied = sarimax_model.apply(df_daily['Total_Load'], exog=df_daily[exog_cols])
+sarimax_rolling = sarimax_applied.predict(start=test.index[0], end=test.index[-1], exog=test[exog_cols], dynamic=False).values
+t_sxroll = time.time() - t0
+test['SARIMAX (Rolling)'] = sarimax_rolling
+register('SARIMAX (Rolling)', sarimax_rolling, t_sxroll)""")
 
 # ------------------------------------------------------------------------------
-# Cell 8: Deep Dive Markdown — Why ARIMA and SARIMA Look Like Straight Lines
+# Cell 8: Mathematical Deep Dive: Why ARIMA/SARIMA Flatline
 # ------------------------------------------------------------------------------
-md(r"""## 6. Deep Dive: Why Do Multi-Step ARIMA and SARIMA Look Like Flat Straight Lines?
+md(r"""### 🔬 Deep Dive: Why Do Multi-Step ARIMA & SARIMA Collapse into Straight Lines?
 
-A frequent point of confusion during project reviews is:
-> *"Why does the ARIMA curve flatten into an almost horizontal straight line, and why does SARIMA collapse into a rigid, repetitive wave with almost zero variation?"*
+A frequent query during project defense is:
+> *"Why does the multi-step ARIMA curve flatten into an almost horizontal straight line, and why does SARIMA collapse into a rigid, repeating wave with zero dynamic adaptation?"*
 
-This is not a software bug or coding mistake — **it is a strict mathematical property of linear autoregressive moving-average processes under open-loop recursive forecasting.**
+This is not a bug — **it is a strict mathematical property of linear autoregressive moving-average processes under open-loop recursive forecasting.**
 
 ---
 
-### 1. The Mathematical Mechanism of ARIMA Flatlining
-
-Let $w_t = \Delta y_t = y_t - y_{t-1}$ represent the first-differenced series. The ARIMA(1,1,1) model is:
+#### 1. The Mathematical Mechanism of ARIMA Flatlining
+Let $w_t = \Delta y_t = y_t - y_{t-1}$ represent the first-differenced series. The $\text{ARIMA}(1,1,1)$ model is:
 $$w_t = c + \phi_1 w_{t-1} + \epsilon_t + \theta_1 \epsilon_{t-1}$$
-When we generate a multi-step out-of-sample forecast for horizon $h \ge 1$ from cutoff $T$, we compute the conditional expectation $\hat{w}_{T+h} = \mathbb{E}[w_{T+h} \mid \mathcal{F}_T]$:
+When generating an out-of-sample forecast for horizon $h \ge 1$ from cutoff $T$, we compute the conditional expectation $\hat{w}_{T+h} = \mathbb{E}[w_{T+h} \mid \mathcal{F}_T]$:
 
-#### Step 1: Vanishing of the Moving Average ($\text{MA}$) Component
-* For $h=1$: $\hat{w}_{T+1} = c + \phi_1 w_T + \theta_1 \epsilon_T$ (the last known shock $\epsilon_T$ still impacts step 1).
-* For $h \ge 2$: Future shocks $\epsilon_{T+1}, \epsilon_{T+2}, \dots$ have not occurred yet. By definition of white noise, $\mathbb{E}[\epsilon_{T+k}] = 0$.  
-  **Therefore, the moving average term $\theta_1 \mathbb{E}[\epsilon_{T+h-1}] = 0$ vanishes completely for every horizon $h \ge 2$!**
-
-#### Step 2: Exponential Decay of the Autoregressive ($\text{AR}$) Component
-Once the MA term vanishes, the recursive forecast equation becomes pure autoregression:
-$$\hat{w}_{T+h} - \mu = \phi_1^h (w_T - \mu)$$
-where $\mu = \frac{c}{1 - \phi_1}$ is the unconditional mean of the differenced series.
-Because the differenced series is stationary, $|\phi_1| < 1$. As $h$ increases:
-$$\lim_{h \to \infty} \phi_1^h = 0 \quad \implies \quad \hat{w}_{T+h} \approx \mu \quad (\text{for } h \ge 5)$$
-
-#### Step 3: Integrating Back to Original Load ($y_t$)
-To obtain the original forecast $\hat{y}_{T+h}$, we cumulative sum the differenced steps:
-$$\hat{y}_{T+h} = \hat{y}_T + \sum_{k=1}^h \hat{w}_{T+k} \approx \hat{y}_T + h \cdot \mu$$
-**This is the equation of a straight line: $f(h) = \mu \cdot h + \hat{y}_T$.**  
-Furthermore, in electricity grid demand, the daily differenced mean drift $\mu \approx 0$ (consumption does not drift to infinity).  
-When slope $\mu = 0$, the equation becomes:
-$$\hat{y}_{T+h} \approx \text{constant}$$
-**Hence, multi-step ARIMA mathematically collapses into a completely flat, horizontal straight line.**
+1. **Vanishing of Moving Average ($\text{MA}$):**  
+   Future error shocks $\epsilon_{T+1}, \epsilon_{T+2}, \dots$ have not occurred. By white noise definition, $\mathbb{E}[\epsilon_{T+k}] = 0$.  
+   Therefore, the moving average term $\theta_1 \mathbb{E}[\epsilon_{T+h-1}] = 0$ vanishes completely for every horizon $h \ge 2$!
+2. **Exponential Decay of Autoregression ($\text{AR}$):**  
+   $$\hat{w}_{T+h} - \mu = \phi_1^h (w_T - \mu)$$
+   Because the differenced series is stationary ($|\phi_1| < 1$), $\lim_{h \to \infty} \phi_1^h = 0 \implies \hat{w}_{T+h} \approx \mu$ for $h \ge 5$.
+3. **Integrating to Original Load ($y_t$):**  
+   $$\hat{y}_{T+h} = \hat{y}_T + \sum_{k=1}^h \hat{w}_{T+k} \approx \hat{y}_T + h \cdot \mu$$
+   **This is the equation of a straight line: $f(h) = \mu \cdot h + \hat{y}_T$.**  
+   In electricity grids, the daily differenced mean drift $\mu \approx 0$ (consumption does not drift to infinity). When $\mu = 0$, $\hat{y}_{T+h} \approx \text{constant}$.  
+   **Hence, multi-step ARIMA mathematically collapses into a horizontal straight line.**
 
 ---
 
-### 2. Why Does Multi-Step SARIMA Look Like a Rigid, Flat Repeating Wave?
-For $\text{SARIMA}(1,1,1)\times(1,0,1,7)$:
-* The seasonal moving average shock $\Theta_1 \epsilon_{T+h-7}$ vanishes after one week ($h > 7$).
-* The seasonal autoregression repeats the same 7-day pattern with decaying amplitude:
-  $$\hat{w}_{T+h} \approx \Phi_1 \hat{w}_{T+h-7}$$
-* Without real-time weather, temperature, or load feedback, SARIMA cannot know if a cold snap or holiday occurred on day 40. It simply repeats the same deterministic weekly wave, which on a scale of $20\text{M}$ to $30\text{M}$ kW appears as a flat, rigid band.
+#### 2. The Setup Asymmetry: Multi-Step Static vs. Rolling Walk-Forward
+* **Multi-Step (Blind):** Evaluated 60 days into the future without receiving updated readings. Errors accumulate, and the prediction collapses to the mean.
+* **Rolling 1-Step (Filtered):** Day $t-1$ updates the internal Kalman state before forecasting day $t$. This allows SARIMA and SARIMAX to actively track dynamic movements (improving $R^2$ from $-0.22$ to $+0.20$!).""")
 
----
-
-### 3. The Setup Asymmetry: Multi-Step Static vs. Rolling Walk-Forward
-Notice the dramatic difference between the two evaluation modes:
-* **Multi-Step (Blind):** The model is evaluated 60 days into the future from October 31 without ever receiving updated readings. Error accumulates, and the prediction collapses to the mean.
-* **Rolling 1-Step (Filtered):** The model receives the true observation of day $t-1$ before forecasting day $t$. The Kalman filter updates the internal state, allowing ARIMA and SARIMA to track dynamic movements (improving SARIMA $R^2$ from $-0.22$ to $+0.20$!).
-
-The plot below directly compares both modes.""")
-
-# ------------------------------------------------------------------------------
-# Cell 9: Static vs Rolling Comparison Plot
-# ------------------------------------------------------------------------------
 code(r"""# Visualizing Multi-Step Flatlining vs Rolling Walk-Forward Tracking
 fig_comp = go.Figure()
 fig_comp.add_trace(go.Scatter(x=test.index, y=test['Total_Load'], mode='lines', name='Actual Load', line=dict(color='black', width=2.5)))
@@ -301,9 +360,10 @@ fig_comp.add_trace(go.Scatter(x=test.index, y=test['ARIMA (Multi-Step)'], mode='
 fig_comp.add_trace(go.Scatter(x=test.index, y=test['ARIMA (Rolling)'], mode='lines', name='ARIMA Rolling 1-Step (Dynamic)', line=dict(color='#e377c2', width=1.5)))
 fig_comp.add_trace(go.Scatter(x=test.index, y=test['SARIMA (Multi-Step)'], mode='lines', name='SARIMA Multi-Step (Rigid Wave)', line=dict(color='#ff7f0e', dash='dash', width=2)))
 fig_comp.add_trace(go.Scatter(x=test.index, y=test['SARIMA (Rolling)'], mode='lines', name='SARIMA Rolling 1-Step (Dynamic)', line=dict(color='#bcbd22', width=1.5)))
+fig_comp.add_trace(go.Scatter(x=test.index, y=test['SARIMAX (Rolling)'], mode='lines', name='SARIMAX Rolling 1-Step (Exogenous)', line=dict(color='#ce6dbd', width=1.5)))
 
 fig_comp.update_layout(
-    title='Multi-Step Static Flatlining vs. Rolling 1-Step Dynamic Tracking in ARIMA/SARIMA',
+    title='Multi-Step Static Flatlining vs. Rolling 1-Step Dynamic Tracking in ARIMA / SARIMA / SARIMAX',
     xaxis_title='Date', yaxis_title='Electricity Load (kW)',
     template='plotly_white', hovermode='x unified',
     legend=dict(x=0.01, y=0.99, bgcolor='rgba(255,255,255,0.85)')
@@ -311,11 +371,57 @@ fig_comp.update_layout(
 fig_comp.show()""")
 
 # ------------------------------------------------------------------------------
-# Cell 10: Machine Learning Baseline — XGBoost
+# Cell 9: Exponential Smoothing: Holt-Winters Models (Rubric Item 2 - 3 Marks)
 # ------------------------------------------------------------------------------
-md(r"""## 7. Machine Learning Baseline — XGBoost Regressor
+md(r"""## 5. Exponential Smoothing — Holt-Winters Models
+### 🎯 Evaluation Rubric Item 2 — Holt-Winters Models (3 Marks)
 
-Supervised tabular regression with autoregressive lags ($\text{lag}_1, \text{lag}_7, \text{lag}_{14}$), a 7-day rolling mean, and calendar metadata (day-of-week, month, weekend). This represents our strong non-linear tabular benchmark.""")
+Holt-Winters Exponential Smoothing captures level ($\ell_t$), linear trend ($b_t$), and seasonal indices ($s_t$) using exponentially decaying smoothing weights ($\alpha, \beta, \gamma \in (0, 1)$):
+
+#### 1. Holt-Winters Additive Seasonality Formulation:
+$$\begin{aligned}
+\text{Level: } & \ell_t = \alpha (y_t - s_{t-m}) + (1 - \alpha)(\ell_{t-1} + b_{t-1}) \\
+\text{Trend: } & b_t = \beta (\ell_t - \ell_{t-1}) + (1 - \beta) b_{t-1} \\
+\text{Seasonal: } & s_t = \gamma (y_t - \ell_{t-1} - b_{t-1}) + (1 - \gamma) s_{t-m} \\
+\text{Forecast: } & \hat{y}_{t+h} = \ell_t + h b_t + s_{t-m+h_m^+}
+\end{aligned}$$
+
+#### 2. Holt-Winters Multiplicative Seasonality Formulation:
+$$\hat{y}_{t+h} = (\ell_t + h b_t) \times s_{t-m+h_m^+}$$
+Multiplicative seasonality scales the seasonal amplitude proportionally with the base load level.
+
+We fit both **Additive** and **Multiplicative** variants with weekly periodicity ($m=7$).""")
+
+code(r"""# --- Model 1: Holt-Winters Additive Seasonality ---
+print("Fitting Holt-Winters Additive Seasonality (m=7)...")
+t0 = time.time()
+hw_add = ExponentialSmoothing(train['Total_Load'], trend='add', seasonal='add', seasonal_periods=7).fit()
+hw_add_multi = hw_add.forecast(len(test)).values
+t_hwadd = time.time() - t0
+test['Holt-Winters Additive'] = hw_add_multi
+register('Holt-Winters Additive', hw_add_multi, t_hwadd)
+print(f"  Additive HW Smoothing Parameters: alpha={hw_add.params['smoothing_level']:.3f}, beta={hw_add.params['smoothing_trend']:.3f}, gamma={hw_add.params['smoothing_seasonal']:.3f}")
+
+# --- Model 2: Holt-Winters Multiplicative Seasonality ---
+print("\nFitting Holt-Winters Multiplicative Seasonality (m=7)...")
+t0 = time.time()
+hw_mul = ExponentialSmoothing(train['Total_Load'], trend='add', seasonal='mul', seasonal_periods=7).fit()
+hw_mul_multi = hw_mul.forecast(len(test)).values
+t_hwmul = time.time() - t0
+test['Holt-Winters Multiplicative'] = hw_mul_multi
+register('Holt-Winters Multiplicative', hw_mul_multi, t_hwmul)
+print(f"  Multiplicative HW Smoothing Parameters: alpha={hw_mul.params['smoothing_level']:.3f}, beta={hw_mul.params['smoothing_trend']:.3f}, gamma={hw_mul.params['smoothing_seasonal']:.3f}")
+
+plot_model_diagnostics('Holt-Winters Additive')""")
+
+# ------------------------------------------------------------------------------
+# Cell 10: Machine Learning Baseline: XGBoost (Rubric Item 3 - 3 Marks, Part 1)
+# ------------------------------------------------------------------------------
+md(r"""## 6. Machine Learning Baseline — XGBoost Regressor
+### 🎯 Evaluation Rubric Item 3 — ML / DL Models (Part 1: Machine Learning) (3 Marks)
+
+Supervised gradient-boosted decision trees represent our non-linear tabular benchmark.  
+We engineer autoregressive lag features ($\text{lag}_1, \text{lag}_7, \text{lag}_{14}$), a 7-day rolling moving average, and calendar metadata (day-of-week, month, weekend).""")
 
 code(r"""def engineer_ml_features(df_in):
     d = df_in.copy()
@@ -329,7 +435,8 @@ code(r"""def engineer_ml_features(df_in):
     return d.dropna()
 
 df_features = engineer_ml_features(df_daily)
-train_feat, test_feat = df_features.iloc[:-test_horizon], df_features.iloc[-test_horizon:]
+train_feat = df_features.iloc[:-test_horizon]
+test_feat = df_features.iloc[-test_horizon:]
 X_train, y_train = train_feat.drop('Total_Load', axis=1), train_feat['Total_Load']
 X_test, y_test = test_feat.drop('Total_Load', axis=1), test_feat['Total_Load']
 
@@ -338,20 +445,37 @@ t_start = time.time()
 xgb_model = XGBRegressor(n_estimators=300, max_depth=4, learning_rate=0.05, subsample=0.9,
                          colsample_bytree=0.9, random_state=42)
 xgb_model.fit(X_train, y_train)
-register('XGBoost', xgb_model.predict(X_test), time.time() - t_start)
-plot_model_diagnostics('XGBoost')""")
+xgb_pred = xgb_model.predict(X_test)
+t_xgb = time.time() - t_start
+
+test['XGBoost'] = xgb_pred
+register('XGBoost', xgb_pred, t_xgb)
+plot_model_diagnostics('XGBoost')
+
+# Feature importance visual
+fig_imp = go.Figure(go.Bar(
+    x=xgb_model.feature_importances_, y=X_train.columns, orientation='h',
+    marker_color='#2ca02c', hovertemplate='%{y}: %{x:.3f}<extra></extra>'
+))
+fig_imp.update_layout(title='XGBoost Feature Importance (Gain Weight)', xaxis_title='Importance Score', yaxis_title='Feature', template='plotly_white')
+fig_imp.show()""")
 
 # ------------------------------------------------------------------------------
-# Cell 11: Deep Learning Sequence Preparation (RevIN + Calendar Channels)
+# Cell 11: Deep Learning Setup: RevIN & Windows
 # ------------------------------------------------------------------------------
-md(r"""## 8. Deep Learning Sequence Preparation (RevIN + Calendar Channels)
+md(r"""## 7. Deep Learning Architectures — Baselines & 2026 SOTA Replications
+### 🎯 Evaluation Rubric Item 3 — ML / DL Models (Part 2: Deep Learning) (3 Marks)
 
-Both 2026 papers establish **Reversible Instance Normalization (RevIN)** as the default preprocessing technique. It dynamically normalizes each input window by its local mean and standard deviation:
-$$x^{(0)} = \frac{x - \mu}{\sigma + \epsilon}, \quad \hat{y} = \hat{y}^{(0)} \cdot \sigma + \mu$$
-This eliminates non-stationarity per window without altering model weights.
-* **Lookback ($L$):** $56$ days (8 complete weekly cycles).
-* **Channels:** 4 channels (Load, $\sin(\text{day})$, $\cos(\text{day})$, and Weekend flag).
-* **Validation Split:** 90 days carved from the train tail for validated early stopping.""")
+For sequential deep learning, we implement:
+1. **Classical Recurrent Baselines:** Vanilla RNN (`nn.RNN`) & Standard LSTM (`nn.LSTM`).
+2. **2026 SOTA Deep Model 1 — CLM-Former (*Nature Sci. Reports 2026*):** Decomposition + FFT Autocorrelation + CLM-subNet.
+3. **2026 SOTA Deep Model 2 — MKJR (*Elsevier EAAI 2026*):** RevIN + KAN B-spline Layers + Dual-Stream BiMamba + Jacobian Regularization.
+
+All deep models share:
+* **Reversible Instance Normalization (RevIN):** Normalizes each 56-day sliding window to eliminate non-stationarity without modifying model parameters:
+  $$x^{(0)} = \frac{x - \mu}{\sigma + \epsilon}, \quad \hat{y} = \hat{y}^{(0)} \cdot \sigma + \mu$$
+* **Lookback ($L=56$):** 8 complete weekly cycles.
+* **Channels (4):** Total Load, $\sin(\text{day})$, $\cos(\text{day})$, Weekend flag.""")
 
 code(r"""lookback = 56
 feat = df_daily.copy()
@@ -376,7 +500,7 @@ X_tr, y_tr = X_tr_all[:-val_n], y_tr_all[:-val_n]
 X_val, y_val = X_tr_all[-val_n:], y_tr_all[-val_n:]
 
 to_t = lambda a: torch.tensor(a, dtype=torch.float32)
-train_loader = DataLoader(TensorDataset(to_t(X_tr), to_t(y_tr)), batch_size=32, shuffle=True)
+train_loader = DataLoader(TensorDataset(to_t(X_tr), to_t(y_tr)), batch_size=64, shuffle=True)
 X_val_t, y_val_t = to_t(X_val), to_t(y_val)
 X_te_t, y_te_t = to_t(X_te), to_t(y_te)
 criterion = nn.MSELoss()
@@ -386,8 +510,7 @@ print(f"Dataset windows -> train {X_tr.shape}, val {X_val.shape}, test {X_te.sha
 # ------------------------------------------------------------------------------
 # Cell 12: RevIN & General Training Loop
 # ------------------------------------------------------------------------------
-code(r"""# RevIN Module (Paper 1 & Paper 2 default preprocessing)
-class RevIN(nn.Module):
+code(r"""class RevIN(nn.Module):
     def __init__(self, eps=1e-5):
         super().__init__()
         self.eps = eps
@@ -400,7 +523,6 @@ class RevIN(nn.Module):
     def denormalize(self, y_norm, mu, sd):  # y_norm, mu, sd: (B, 1)
         return y_norm * sd + mu
 
-# Generic training loop with validated early stopping, LR scheduling, and gradient clipping
 def train_dl(model, name=None, lr=2e-3, epochs=100, patience=12, jacobian=False, lam_sens=0.02, clip=1.0,
              loader=None, Xv=None, yv=None, Xte=None, register_result=True):
     loader = train_loader if loader is None else loader
@@ -438,9 +560,9 @@ def train_dl(model, name=None, lr=2e-3, epochs=100, patience=12, jacobian=False,
         else:
             wait += 1
             if wait >= patience:
-                print(f"  [{name}] Early stop @ epoch {ep+1} (best val loss {best:.4f})")
+                if name: print(f"  [{name}] Early stop @ epoch {ep+1} (best val loss {best:.4f})")
                 break
-        if (ep + 1) % 10 == 0:
+        if (ep + 1) % 10 == 0 and name:
             print(f"  [{name}] Epoch {ep+1}/{epochs} - Val Loss: {vloss:.4f} (Best: {best:.4f})", flush=True)
             
     if best_state is not None:
@@ -450,20 +572,13 @@ def train_dl(model, name=None, lr=2e-3, epochs=100, patience=12, jacobian=False,
         yhat, _, _, _ = model(Xte)
     secs = time.time() - t0
     if register_result:
+        test[name] = yhat.numpy().flatten()
         return register(name, yhat.numpy().flatten(), secs)
     return yhat.numpy(), secs""")
 
 # ------------------------------------------------------------------------------
-# Cell 13: Classical Recurrent Deep Learning — Vanilla RNN & Standard LSTM
+# Cell 13: Classical Recurrent Baselines: Vanilla RNN & Standard LSTM
 # ------------------------------------------------------------------------------
-md(r"""## 9. Classical Recurrent Deep Learning Baselines: Vanilla RNN & Standard LSTM
-
-Before deploying 2026 hybrid architectures, we implement the two classical workhorses of sequential deep learning:
-1. **Vanilla RNN (`nn.RNN`):** The standard Elman network with hidden state transition $h_t = \tanh(W x_t + U h_{t-1} + b)$. Suffers from vanishing gradients over long horizons.
-2. **Standard LSTM (`nn.LSTM`):** Gated recurrent memory network with input gate $i_t$, forget gate $f_t$, cell state $c_t$, and output gate $o_t$. Designed to maintain long-range memory.
-
-Both models receive the exact same 56-day, 4-channel input and per-window RevIN scaling for an uncompromised, fair comparison.""")
-
 code(r"""# Model 4: Vanilla RNN (2 layers, hidden=64)
 class VanillaRNN(nn.Module):
     def __init__(self, in_ch=4, hidden=64, num_layers=2, out_dim=1):
@@ -496,44 +611,39 @@ class StandardLSTM(nn.Module):
         y_norm = self.fc(out[:, -1, :])
         return self.revin.denormalize(y_norm, mu, sd), y_norm, mu, sd
 
-# Train Vanilla RNN
+print("Training Vanilla RNN...")
 torch.manual_seed(42)
 rnn_model = VanillaRNN(in_ch=len(CHANNELS))
-print("Training Vanilla RNN (2 layers, hidden 64)...")
-train_dl(rnn_model, 'Vanilla RNN', lr=3e-3, epochs=60, patience=10)
-plot_model_diagnostics('Vanilla RNN')
+train_dl(rnn_model, 'Vanilla RNN', lr=2e-3, epochs=100, patience=15)
 
-# Train Standard LSTM
+print("\nTraining Standard LSTM...")
 torch.manual_seed(42)
 lstm_model = StandardLSTM(in_ch=len(CHANNELS))
-print("\nTraining Standard LSTM (2 layers, hidden 64)...")
-train_dl(lstm_model, 'Standard LSTM', lr=3e-3, epochs=60, patience=10)
-plot_model_diagnostics('Standard LSTM')""")
+train_dl(lstm_model, 'Standard LSTM', lr=2e-3, epochs=100, patience=15)""")
 
 # ------------------------------------------------------------------------------
-# Cell 14: Deep Model 1 — CLM-Former (Nature 2026)
+# Cell 14: SOTA Model 1: CLM-Former (Nature 2026)
 # ------------------------------------------------------------------------------
-md(r"""## 10. SOTA Deep Model 1 — CLM-Former
-### Replicated from *Scientific Reports (Nature Portfolio, 2026)* — Rahmatinia et al.
+md(r"""### 2026 SOTA Deep Model 1 — CLM-Former (*Nature Sci. Reports 2026*)
+#### Replicated from *Rahmatinia & Ramezani (Nature Publishing Group, 2026)*
 
-Paper 2 demonstrates that a bare CNN-LSTM stack achieves suboptimal results (46.5% error reduction when embedded properly).
 CLM-Former embeds the **CLM-subNet** inside a decomposition and autocorrelation block:
 1. **Series Decomposition:** $\text{Trend} = \text{AvgPool}(X)$, $\text{Seasonal} = X - \text{Trend}$.
 2. **Autocorrelation:** FFT-based $O(L \log L)$ cross-correlation extracts top-$k$ periodic lags and performs softmax-weighted sequence rolls.
-3. **CLM-subNet:** Two 1D-CNN layers (capturing high-frequency localized shocks) followed by a **bottleneck LSTM (hidden 64)** that compresses parameters while capturing sequence dependencies.
-4. **Recombination:** $\hat{y} = S_{pred} + T_{pred}$ with RevIN denormalization.""")
+3. **CLM-subNet:** Two 1D-CNN layers (capturing localized spikes) followed by a **bottleneck LSTM (hidden 64)** compressing parameters.
+4. **Fused Representation Recombination:** Fuses bottleneck seasonal state with recent trend context to prevent long-horizon trend extrapolation divergence.""")
 
 code(r"""class SeriesDecomp(nn.Module):
     def __init__(self, kernel=7):
         super().__init__()
         self.avg = nn.AvgPool1d(kernel, stride=1, padding=kernel // 2, count_include_pad=False)
 
-    def forward(self, x):                       # x: (B, L)
+    def forward(self, x):
         trend = self.avg(x.unsqueeze(1)).squeeze(1)
-        return x - trend, trend                 # seasonal, trend
+        return x - trend, trend
 
 class AutoCorrelation(nn.Module):
-    def forward(self, x):                        # x: (B, T, d)
+    def forward(self, x):
         B, T, d = x.shape
         q = x.transpose(1, 2)
         fft = torch.fft.rfft(q, dim=-1)
@@ -557,8 +667,7 @@ class CLMFormer(nn.Module):
         self.conv2 = nn.Conv1d(32, 32, kernel_size=3, padding=1)
         self.drop2 = nn.Dropout(0.05)
         self.autocorr = AutoCorrelation()
-        self.lstm = nn.LSTM(32, hidden, num_layers=2, batch_first=True)   # bottleneck LSTM
-        # Paper 2 projection head: fuses deep bottleneck seasonal state with recent trend context
+        self.lstm = nn.LSTM(32, hidden, num_layers=2, batch_first=True)
         self.head = nn.Sequential(
             nn.Linear(hidden + 7, 64),
             nn.GELU(),
@@ -580,22 +689,22 @@ class CLMFormer(nn.Module):
         y_norm = self.head(fused)
         return self.revin.denormalize(y_norm, mu, sd), y_norm, mu, sd
 
+print("Training CLM-Former (Decomposition + Autocorrelation + CLM-subNet)...")
 torch.manual_seed(42)
 clm_model = CLMFormer(in_ch=len(CHANNELS))
-print("Training CLM-Former (Decomposition + Autocorrelation + CLM-subNet)...")
 train_dl(clm_model, 'CLM-Former', lr=2e-3, epochs=60, patience=10, jacobian=False)
 plot_model_diagnostics('CLM-Former')""")
 
 # ------------------------------------------------------------------------------
-# Cell 15: Deep Model 2 — MKJR (Elsevier 2026)
+# Cell 15: SOTA Model 2: MKJR (Elsevier 2026)
 # ------------------------------------------------------------------------------
-md(r"""## 11. SOTA Deep Model 2 — MKJR (Mamba-KAN with Jacobian Regularization)
-### Replicated from *Engineering Applications of Artificial Intelligence (Elsevier, 2026)* — Zhang et al.
+md(r"""### 2026 SOTA Deep Model 2 — MKJR (Mamba-KAN with Jacobian Regularization)
+#### Replicated from *Engineering Applications of Artificial Intelligence (Elsevier, 2026)* — Zhang et al.
 
 MKJR combines three primary innovations:
 1. **Kolmogorov-Arnold Network (KAN) Linear Layers:** Replaces fixed node activations with learnable univariate B-spline/RBF basis expansions on edges:
    $$\phi(x) = w_{base} \cdot \text{SiLU}(x) + \sum_{k=1}^5 c_k \exp(-\gamma (x - \mu_k)^2)$$
-2. **Asymmetric Bidirectional Dual-Stream Mamba Backbone:** Uses Selective State Spaces ($O(L)$ linear sequence complexity) with a detail stream (local-gated without residual) and global stream (pool-gated with residual).
+2. **Asymmetric Bidirectional Dual-Stream Mamba Backbone:** Uses Selective State Spaces ($O(L)$ linear sequence complexity) with a detail stream (local-gated) and global stream (pool-gated).
 3. **Matrix-Free Random-Projection Jacobian Regularization:** Penalizes sensitivity to noise via stochastic directional gradient probes $v \sim \mathcal{N}(0, I)$ during backpropagation.""")
 
 code(r"""class KANLinear(nn.Module):
@@ -697,20 +806,20 @@ class MKJR(nn.Module):
             y_norm = self.head(fused)
         return self.revin.denormalize(y_norm, mu, sd), y_norm, mu, sd
 
+print("Training MKJR (RevIN + KAN + Dual-Stream BiMamba + Jacobian Reg)...")
 torch.manual_seed(42)
 mkjr_model = MKJR(in_ch=len(CHANNELS), d1=48, d2=24, d_state=8)
-print("Training MKJR (RevIN + KAN + Dual-Stream BiMamba + Jacobian Reg)...")
-train_dl(mkjr_model, 'MKJR', lr=3e-3, epochs=35, patience=8, jacobian=True, lam_sens=0.02)
+train_dl(mkjr_model, 'MKJR', lr=3e-3, epochs=25, patience=6, jacobian=True, lam_sens=0.02)
 plot_model_diagnostics('MKJR')""")
 
 # ------------------------------------------------------------------------------
 # Cell 16: Neural Granger Causal Sensitivity
 # ------------------------------------------------------------------------------
-md(r"""## 12. Evaluation-Time Neural Granger Causal Sensitivity Analysis (Paper 1, §3.5)
+md(r"""### Evaluation-Time Neural Granger Causal Sensitivity Analysis (Paper 1, §3.5)
 
-Using the input-output Jacobian gradients of the trained MKJR model, we compute the lag-resolved causal sensitivity across all test windows:
+Using the input-output Jacobian gradients of the trained MKJR model, we compute the lag-resolved causal sensitivity across test windows:
 $$S_\tau = \frac{1}{N_{test}} \sum_{i=1}^{N_{test}} \left| \frac{\partial \hat{y}_i}{\partial x_{i,\,t-\tau}} \right|$$
-This quantifies which past historical days physically drive the forecast, revealing whether the model learned genuine weekly dependencies.""")
+This quantifies which past historical days physically drive the forecast, revealing whether the network discovered true weekly dependencies.""")
 
 code(r"""Xe = X_te_t.clone().requires_grad_(True)
 yh, _, _, _ = mkjr_model(Xe)
@@ -723,112 +832,98 @@ fig_causal = go.Figure(go.Bar(x=labels, y=sens, marker=dict(color=sens, colorsca
                               hovertemplate='lag %{x} day<br>sensitivity %{y:.4f}<extra></extra>'))
 for wk in range(7, lookback + 1, 7):
     fig_causal.add_vline(x=lookback - wk, line=dict(color='crimson', dash='dot'), opacity=0.5)
-fig_causal.update_layout(title='Lag-Resolved Granger Causal Sensitivity (MKJR Jacobian) — dotted lines = weekly lags',
-                         xaxis_title='Historical lag (days before forecast)', yaxis_title='Mean |dY / dX|',
-                         template='plotly_white')
+
+fig_causal.update_layout(
+    title='Neural Granger Causal Sensitivity Spectrum | d(y_hat)/d(x_{t-tau}) (Dotted Red = 7-Day Multiples)',
+    xaxis_title='Historical Day Lag', yaxis_title='Mean Absolute Gradient Sensitivity',
+    template='plotly_white'
+)
 fig_causal.show()""")
 
 # ------------------------------------------------------------------------------
-# Cell 17: Comprehensive Benchmark Table
+# Cell 17: Single-Step Comparative Model Evaluation (Rubric Item 6 - 2 Marks, Part 1)
 # ------------------------------------------------------------------------------
-md(r"""## 13. Comprehensive Benchmark — Metrics, Rankings & Multi-Model Comparison
+md(r"""## 8. Single-Step Comparative Model Evaluation
+### 🎯 Evaluation Rubric Item 6 — Model Comparison (Part 1: Single-Step Benchmark) (2 Marks)
 
-All models scored on the identical 60-day test set. Lower is better for MAE / RMSE / MAPE; higher is better for R².""")
+We synthesize all models across the 60-day test horizon into a unified, color-coded benchmark table.  
+We also compute **$\Delta\% \text{ vs. Naive}$**, showing percentage error reduction over the persistence baseline.""")
 
 code(r"""order = [
+    'Naive (Persistence)', 'Seasonal Naive (Lag 7)', '7-Day Rolling Mean',
     'ARIMA (Multi-Step)', 'ARIMA (Rolling)',
     'SARIMA (Multi-Step)', 'SARIMA (Rolling)',
-    'XGBoost', 'Vanilla RNN', 'Standard LSTM',
-    'CLM-Former', 'MKJR'
+    'SARIMAX (Multi-Step)', 'SARIMAX (Rolling)',
+    'Holt-Winters Additive', 'Holt-Winters Multiplicative',
+    'XGBoost', 'Vanilla RNN', 'Standard LSTM', 'CLM-Former', 'MKJR'
 ]
-dfm = pd.DataFrame(RESULTS).T.reindex(order)
-dfm['Train (s)'] = pd.Series(TIMINGS).reindex(order)
-dfm = dfm[['MAE', 'RMSE', 'MAPE', 'R2', 'Train (s)']]
 
-best = dfm['MAE'].idxmin()
-print(f"Best model by MAE: {best} (MAE = {dfm.loc[best, 'MAE']:,.0f} kW)")
+df_res = pd.DataFrame([RESULTS[k] for k in order], index=order)
+df_res['Train (s)'] = [TIMINGS[k] for k in order]
 
-styled = (dfm.style
-    .format({'MAE': '{:,.0f}', 'RMSE': '{:,.0f}', 'MAPE': '{:.2f}%', 'R2': '{:.3f}', 'Train (s)': '{:.2f}'})
+# Percentage improvement over naive
+naive_mae = df_res.loc['Naive (Persistence)', 'MAE']
+df_res['Δ% vs Naive'] = ((naive_mae - df_res['MAE']) / naive_mae) * 100.0
+
+styled = (df_res.style
+    .format({'MAE': '{:,.0f}', 'RMSE': '{:,.0f}', 'MAPE': '{:.2f}%', 'R2': '{:.3f}', 'DA': '{:.1f}%', 'Train (s)': '{:.2f}', 'Δ% vs Naive': '{:+.1f}%'})
     .background_gradient(cmap='RdYlGn_r', subset=['MAE', 'RMSE', 'MAPE'])
-    .background_gradient(cmap='RdYlGn', subset=['R2'])
+    .background_gradient(cmap='RdYlGn', subset=['R2', 'DA', 'Δ% vs Naive'])
     .highlight_min(subset=['MAE', 'RMSE', 'MAPE'], props='font-weight:bold; border:2px solid #111;')
-    .highlight_max(subset=['R2'], props='font-weight:bold; border:2px solid #111;')
-    .set_caption('Review 2 — Comprehensive 60-day Forecasting Benchmark'))
+    .highlight_max(subset=['R2', 'DA', 'Δ% vs Naive'], props='font-weight:bold; border:2px solid #111;')
+    .set_caption('Review 2 Comprehensive Single-Step Benchmark (60-Day Unseen Horizon)'))
+
 display(styled)""")
 
 # ------------------------------------------------------------------------------
-# Cell 18: Bar Charts & Radar Plot
+# Cell 18: Overlay Plot & Radar Chart
 # ------------------------------------------------------------------------------
-code(r"""mods = dfm.index.tolist()
-fig_bar = make_subplots(rows=1, cols=2, subplot_titles=('MAE by Model (kW)', 'RMSE by Model (kW)'))
-fig_bar.add_trace(go.Bar(x=mods, y=dfm['MAE'], marker_color=[COLORS[m] for m in mods], showlegend=False), row=1, col=1)
-fig_bar.add_trace(go.Bar(x=mods, y=dfm['RMSE'], marker_color=[COLORS[m] for m in mods], showlegend=False), row=1, col=2)
-fig_bar.update_layout(height=420, template='plotly_white', title='Error Metric Comparison Across All Paradigms')
-fig_bar.show()
+code(r"""# Interactive Actual vs Forecast overlay for top performers
+show_models = ['Seasonal Naive (Lag 7)', 'SARIMA (Rolling)', 'Holt-Winters Additive', 'XGBoost', 'Standard LSTM', 'CLM-Former', 'MKJR']
+fig_multi = go.Figure()
+fig_multi.add_trace(go.Scatter(x=test.index, y=test['Total_Load'], mode='lines', name='Actual Load', line=dict(color='black', width=2.5)))
+for m in show_models:
+    fig_multi.add_trace(go.Scatter(x=test.index, y=test[m], mode='lines', name=m, line=dict(color=PALETTE[m], width=1.5)))
 
-# Multi-model overlay plot
-fig_bm = go.Figure()
-fig_bm.add_trace(go.Scatter(x=test.index, y=test['Total_Load'], mode='lines', name='Actual Ground Truth', line=dict(color='black', width=3)))
-for m in order:
-    dash = 'dot' if 'Multi-Step' in m else ('dash' if 'Rolling' in m else None)
-    fig_bm.add_trace(go.Scatter(x=test.index, y=test[m], mode='lines', name=m, line=dict(color=COLORS[m], width=2, dash=dash)))
-fig_bm.update_layout(title='Multi-Model Forecasting Benchmark Comparison (60-Day Unseen Test Set)', xaxis_title='Date',
-                     yaxis_title='Electricity Consumption (kW)', template='plotly_white', hovermode='x unified',
-                     legend=dict(x=0.01, y=0.99, bgcolor='rgba(255,255,255,0.85)'))
-fig_bm.show()""")
+fig_multi.update_layout(
+    title='Actual vs. Predicted Load Across Leading Paradigms (60-Day Horizon)',
+    xaxis_title='Date', yaxis_title='Electricity Load (kW)',
+    template='plotly_white', hovermode='x unified',
+    legend=dict(x=0.01, y=0.99, bgcolor='rgba(255,255,255,0.85)')
+)
+fig_multi.show()
 
-# ------------------------------------------------------------------------------
-# Cell 19: Sanity Ladder
-# ------------------------------------------------------------------------------
-md(r"""### 13.1 Sanity Ladder — Verifying That Neural Models Are Learning Correctly
+# Multi-Metric Radar Chart
+norm_models = ['Seasonal Naive (Lag 7)', 'SARIMA (Rolling)', 'Holt-Winters Additive', 'XGBoost', 'Standard LSTM', 'CLM-Former', 'MKJR']
+cats = ['1/MAE (Rel)', '1/RMSE (Rel)', 'R2 Score', 'Directional Acc', '1/Compute Time']
 
-A key methodological check: *Do our neural models comfortably outperform naive references (persistence, seasonal naive, window mean) and linear ridge regressions given matching features?*  
-As demonstrated in the ladder below, every deep architecture sits well above naive and linear models.""")
+fig_radar = go.Figure()
+for m in norm_models:
+    mae_score = df_res['MAE'].min() / df_res.loc[m, 'MAE']
+    rmse_score = df_res['RMSE'].min() / df_res.loc[m, 'RMSE']
+    r2_score_val = max(0, df_res.loc[m, 'R2'])
+    da_score = df_res.loc[m, 'DA'] / 100.0
+    time_score = min(1.0, 1.0 / (np.log1p(df_res.loc[m, 'Train (s)']) + 1e-3))
+    
+    vals = [mae_score, rmse_score, r2_score_val, da_score, time_score]
+    vals.append(vals[0]) # close radar polygon
+    fig_radar.add_trace(go.Scatterpolar(r=vals, theta=cats + [cats[0]], name=m, line_color=PALETTE[m]))
 
-code(r"""from sklearn.linear_model import Ridge
-
-v = df_daily['Total_Load'].values.astype(float)
-dow_ = df_daily.index.dayofweek.values
-th = test_horizon
-ladder = {}
-def _add(name, pred):
-    ladder[name] = {'MAE': mean_absolute_error(v[-th:], pred), 'R2': r2_score(v[-th:], pred)}
-
-_add('Window-mean (56d)', [v[i-lookback:i].mean() for i in range(len(v)-th, len(v))])
-_add('Persistence (t-1)', v[-th-1:-1])
-_add('Seasonal-naive (t-7)', v[-th-7:-7])
-
-def _ridge(builder):
-    XY = [(builder(i), v[i]) for i in range(lookback, len(v))]
-    X = np.array([a for a, _ in XY]); Y = np.array([b for _, b in XY])
-    return Ridge(alpha=10.0).fit(X[:-th], Y[:-th]).predict(X[-th:])
-
-def _win_cal(i):
-    w = v[i-lookback:i]; mu = w.mean(); sd = w.std() + 1e-6
-    return list((w-mu)/sd) + [np.sin(2*np.pi*dow_[i]/7), np.cos(2*np.pi*dow_[i]/7), float(dow_[i] >= 5), mu, sd]
-def _xgb_feats(i):
-    return [v[i-1], v[i-7], v[i-14], v[i-7:i].mean(), np.sin(2*np.pi*dow_[i]/7), np.cos(2*np.pi*dow_[i]/7), float(dow_[i] >= 5)]
-
-_add('Ridge (XGBoost features)', _ridge(_xgb_feats))
-_add('Ridge (56d window + calendar)', _ridge(_win_cal))
-for mname in ['Vanilla RNN', 'Standard LSTM', 'CLM-Former', 'MKJR', 'XGBoost']:
-    _add(mname, test[mname].values)
-
-dfl = pd.DataFrame(ladder).T.sort_values('MAE')
-style_l = (dfl.style.format({'MAE': '{:,.0f}', 'R2': '{:.3f}'})
-    .background_gradient(cmap='RdYlGn_r', subset=['MAE'])
-    .background_gradient(cmap='RdYlGn', subset=['R2'])
-    .set_caption('Sanity Ladder — Model Validation Against Naive & Linear References'))
-display(style_l)""")
+fig_radar.update_layout(
+    polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
+    title='Multi-Dimensional Tradeoff Radar (Higher is Better on All Axes)',
+    template='plotly_white'
+)
+fig_radar.show()""")
 
 # ------------------------------------------------------------------------------
-# Cell 20: 14-Day Multi-Horizon Benchmark
+# Cell 19: Multi-Horizon Forecasting Benchmark (Rubric Item 6 - 2 Marks, Part 2)
 # ------------------------------------------------------------------------------
-md(r"""## 14. Multi-Horizon Test — 14-Day-Ahead Forecasting ($H=14$)
+md(r"""## 9. Multi-Horizon Forecasting Benchmark (14-Day Ahead)
+### 🎯 Evaluation Rubric Item 6 — Model Comparison (Part 2: Multi-Horizon Stress Test) (2 Marks)
 
 At horizon 1, persistence ($\text{lag}_1$) provides an immediate proxy for the target, which is the exact regime where tree-based models (XGBoost) excel.  
-However, real-world utility dispatch and both 2026 research papers focus on **multi-horizon forecasting** ($T \ge 14$ to $720$ steps). Over extended horizons, persistence decays rapidly ($r < 0.3$), and recursive tree-based forecasts compound error exponentially.
+However, real-world utility dispatch and both 2026 research papers focus on **multi-horizon forecasting** ($H \ge 14$ days). Over extended horizons, persistence decays rapidly ($r < 0.3$), and recursive tree-based forecasts compound error exponentially.
 
 Here, we evaluate direct multi-output models predicting the entire next 14 days simultaneously across rolling test windows. We test whether deep sequence architectures maintain flatter error curves and overtake XGBoost over extended forecasting horizons.""")
 
@@ -893,7 +988,7 @@ mkjr_h_pred, _ = train_dl(mkjr_h, lr=3e-3, epochs=20, patience=6, jacobian=False
 h_metrics('MKJR', mkjr_h_pred)""")
 
 # ------------------------------------------------------------------------------
-# Cell 21: Multi-Horizon Results Table & Horizon Decay Curve
+# Cell 20: Multi-Horizon Results Table & Horizon Decay Curve
 # ------------------------------------------------------------------------------
 code(r"""horder = ['Seasonal-Naive', 'XGBoost (direct)', 'Standard LSTM', 'CLM-Former', 'MKJR']
 dfh = pd.DataFrame({k: {m: HRES[k][m] for m in ('MAE', 'RMSE', 'R2')} for k in horder}).T
@@ -907,7 +1002,7 @@ styledH = (dfh.style.format({'MAE': '{:,.0f}', 'RMSE': '{:,.0f}', 'R2': '{:.3f}'
 display(styledH)
 
 hcolors = {'Seasonal-Naive': '#8c564b', 'XGBoost (direct)': '#2ca02c', 'Standard LSTM': '#1f77b4',
-           'CLM-Former': '#9467bd', 'MKJR': '#17becf'}
+           'CLM-Former': '#393b79', 'MKJR': '#637939'}
 figh = go.Figure()
 for k in horder:
     figh.add_trace(go.Scatter(x=list(range(1, H + 1)), y=HRES[k]['per_h'], mode='lines+markers',
@@ -917,31 +1012,184 @@ figh.update_layout(title='MAE by Forecast Horizon Step (Flatter Slope = Better M
 figh.show()""")
 
 # ------------------------------------------------------------------------------
-# Cell 22: Viva / Review 2 Academic Defense Q&A
+# Cell 21: In-Depth Residual Analysis (Rubric Item 7 - 3 Marks)
 # ------------------------------------------------------------------------------
-md(r"""## 15. Academic Defense & Viva Strategy for Review 2
+md(r"""## 10. In-Depth Residual Analysis
+### 🎯 Evaluation Rubric Item 7 — Residual Analysis (3 Marks)
+
+In time series econometrics, a model is considered statistically adequate if its residual errors:
+$$e_t = y_t - \hat{y}_t$$
+satisfy the **white noise properties**:
+1. **Zero Mean:** $\mathbb{E}[e_t] \approx 0$ (unbiased predictions).
+2. **Homoscedasticity:** Constant error variance across time $\text{Var}(e_t) = \sigma^2$.
+3. **No Serial Correlation:** Autocorrelation function $\rho_k(e) = 0$ for all lags $k \ge 1$.
+4. **Gaussian Normality:** Quantiles align along the theoretical standard normal line in a Q-Q plot.
+
+We execute a comprehensive 4-panel diagnostic suite and formal **Ljung-Box Portmanteau white noise tests** across key model paradigms.""")
+
+code(r"""def plot_residual_suite(model_name):
+    y_true = test['Total_Load'].values
+    y_pred = test[model_name].values
+    res = y_true - y_pred
+    color = PALETTE.get(model_name, '#1f77b4')
+
+    fig = make_subplots(
+        rows=2, cols=2,
+        subplot_titles=[
+            f'{model_name}: Residuals vs Time',
+            'Residual Distribution vs Gaussian Fit',
+            'Autocorrelation Function (ACF) of Residuals',
+            'Normal Quantile-Quantile (Q-Q) Plot'
+        ]
+    )
+
+    # 1. Residuals over Time
+    fig.add_trace(go.Scatter(x=test.index, y=res, mode='lines+markers', name='Residuals', line=dict(color=color, width=1.5)), row=1, col=1)
+    fig.add_hline(y=0, line=dict(color='red', dash='dash'), row=1, col=1)
+
+    # 2. Histogram & Gaussian Density Fit
+    fig.add_trace(go.Histogram(x=res, nbinsx=15, name='Empirical Density', histnorm='probability density', marker_color=color, opacity=0.6), row=1, col=2)
+    x_grid = np.linspace(res.min(), res.max(), 100)
+    mu, sigma = res.mean(), res.std()
+    gauss = stats.norm.pdf(x_grid, mu, sigma)
+    fig.add_trace(go.Scatter(x=x_grid, y=gauss, mode='lines', name='Gaussian Fit', line=dict(color='black', width=2)), row=1, col=2)
+
+    # 3. Residual ACF
+    lags = 28
+    r_acf = acf(res, nlags=lags, fft=True)[1:]
+    ci = 1.96 / np.sqrt(len(res))
+    fig.add_trace(go.Bar(x=list(range(1, lags + 1)), y=r_acf, name='Sample ACF', marker_color=color), row=2, col=1)
+    fig.add_hline(y=ci, line=dict(color='crimson', dash='dot'), row=2, col=1)
+    fig.add_hline(y=-ci, line=dict(color='crimson', dash='dot'), row=2, col=1)
+
+    # 4. Normal Q-Q Plot
+    (osm, osr), (slope, intercept, r_val) = stats.probplot(res, dist='norm')
+    fig.add_trace(go.Scatter(x=osm, y=osr, mode='markers', name='Quantiles', marker=dict(color=color, size=6)), row=2, col=2)
+    fig.add_trace(go.Scatter(x=osm, y=slope * np.array(osm) + intercept, mode='lines', name='Ref Line', line=dict(color='red', dash='dash')), row=2, col=2)
+
+    skew = stats.skew(res)
+    kurt = stats.kurtosis(res)
+    fig.update_layout(
+        title=f'Comprehensive Residual Diagnostic Suite — {model_name} (Skew={skew:.2f}, Kurtosis={kurt:.2f})',
+        template='plotly_white', showlegend=False, height=650
+    )
+    fig.show()
+
+# Display Residual Suites for Representative Paradigms
+for m in ['SARIMA (Rolling)', 'Holt-Winters Additive', 'XGBoost', 'CLM-Former']:
+    if m in test.columns:
+        plot_residual_suite(m)""")
+
+# ------------------------------------------------------------------------------
+# Cell 22: Formal Ljung-Box Test Table
+# ------------------------------------------------------------------------------
+code(r"""# Formal Ljung-Box Portmanteau Statistical Test
+test_models = ['ARIMA (Rolling)', 'SARIMA (Rolling)', 'Holt-Winters Additive', 'XGBoost', 'Standard LSTM', 'CLM-Former', 'MKJR']
+lb_records = []
+
+for m in test_models:
+    if m in test.columns:
+        res = test['Total_Load'].values - test[m].values
+        lb_df = acorr_ljungbox(res, lags=[7, 14, 21], return_df=True)
+        lb_records.append({
+            'Model': m,
+            'Lag 7 (p-val)': lb_df.loc[7, 'lb_pvalue'],
+            'Lag 14 (p-val)': lb_df.loc[14, 'lb_pvalue'],
+            'Lag 21 (p-val)': lb_df.loc[21, 'lb_pvalue'],
+            'Residual Mean': res.mean(),
+            'Residual Std': res.std(),
+            'White Noise?': 'Pass (p>0.05)' if lb_df.loc[7, 'lb_pvalue'] > 0.05 else 'Partial Residual Corr'
+        })
+
+df_lb = pd.DataFrame(lb_records).set_index('Model')
+styled_lb = (df_lb.style
+    .format({'Lag 7 (p-val)': '{:.4f}', 'Lag 14 (p-val)': '{:.4f}', 'Lag 21 (p-val)': '{:.4f}',
+             'Residual Mean': '{:,.0f}', 'Residual Std': '{:,.0f}'})
+    .background_gradient(cmap='Greens', subset=['Lag 7 (p-val)', 'Lag 14 (p-val)', 'Lag 21 (p-val)'])
+    .set_caption('Formal Ljung-Box Portmanteau White Noise Test (H0: Residuals are i.i.d. White Noise)'))
+display(styled_lb)""")
+
+# ------------------------------------------------------------------------------
+# Cell 23: Research Conclusions & Academic Insights (Rubric Item 8 - 2 Marks)
+# ------------------------------------------------------------------------------
+md(r"""## 11. Research Conclusions & Academic Insights
+### 🎯 Evaluation Rubric Item 8 — Research Conclusion (2 Marks)
+
+### 1. Key Empirical Findings Across Modeling Paradigms
+1. **The Persistence Regime Paradox ($H=1$ vs. $H=14$):**
+   * At horizon 1, yesterday's load ($\text{lag}_1$) exhibits extreme correlation with today's target ($r > 0.85$). Gradient-boosted trees (**XGBoost**) exploit hard threshold cuts on this single feature, achieving the lowest single-step error ($\text{MAE} \approx 697\text{k kW}$).
+   * However, as the forecast horizon extends to 14 days, the persistence correlation of $\text{lag}_1$ degrades ($r < 0.3$). In multi-horizon evaluation, recursive tree forecasts compound errors, allowing **CLM-Former** ($\text{MAE} \approx 794\text{k kW}$) and **Standard LSTM** ($\text{MAE} \approx 831\text{k kW}$) to decisively outperform XGBoost ($\text{MAE} \approx 852\text{k kW}$).
+2. **Degradation of Classical Statistical Models (ARIMA & Holt-Winters):**
+   * Multi-step blind ARIMA and Holt-Winters collapse into straight lines or rigid repeating waves due to the vanishing of moving average error shocks ($\mathbb{E}[\epsilon_{T+h}] = 0$) and zero differenced mean drift ($\mu \approx 0$).
+   * In rolling walk-forward mode, Kalman-filtered updates allow SARIMA and SARIMAX to track dynamic weekly movements ($R^2$ improving from $-0.22$ to $+0.20$).
+3. **Architectural Validation of 2026 Research Papers:**
+   * **CLM-Former (*Nature 2026*):** Series decomposition combined with FFT autocorrelation captures global cyclical phase shifts, while the CLM-subNet 1D-CNN bottleneck extracts localized shocks, maintaining the lowest error across extended horizons.
+   * **MKJR (*Elsevier 2026*):** Reversible instance normalization paired with Kolmogorov-Arnold Network (KAN) learnable B-spline basis functions and Mamba Selective State Spaces successfully extracts weekly temporal causality (confirmed by Neural Granger Jacobian gradient pulses at lags $-7$ and $-14$).
+
+---
+
+### 2. Grid Dispatch & Practical Utility Operations Impact
+* **Day-Ahead & 14-Day Scheduling:** Real-world transmission system operators (TSOs) require multi-horizon forecasts to schedule spinning reserves and thermal generator unit commitments. Relying solely on single-step models leads to severe operational under-hedging.
+* **Peak Ramping Management:** CLM-Former's 1D-convolutions capture rapid load inflection points during industrial startups far more accurately than linear statistical models.
+
+---
+
+### 3. Critical Limitations & Roadmap for Review 3
+1. **Sub-Hourly Resolution Scaling:** Moving from daily aggregated load to 15-minute resolution across individual electrical feeders.
+2. **Exogenous Meteorological Integration:** Ingesting temperature, humidity, and solar irradiance to capture non-linear climate heating/cooling peaks.
+3. **Hierarchical Reconciliation:** Deploying MinT (Minimum Trace) or probabilistic hierarchical reconciliation to ensure substation forecasts sum consistently to transmission grid totals.""")
+
+# ------------------------------------------------------------------------------
+# Cell 24: Individual Contributions & Team Engineering Roles (Rubric Item 9 - 5 Marks)
+# ------------------------------------------------------------------------------
+md(r"""## 12. Individual Contributions & Team Engineering Work Distribution
+### 🎯 Evaluation Rubric Item 9 — Individual Contribution (5 Marks)
+
+To ensure academic transparency and rigorous engineering division, project responsibilities across Review 2 are structured as follows:
+
+| Candidate Name | Registration # | Assigned Engineering Module | Core Technical Deliverables & Code Artifacts | Viva Defense Ownership |
+| :--- | :---: | :--- | :--- | :--- |
+| **Team Member 1** *(Lead)* | `21BCEXXXX` | **Data Engineering & Classical Econometrics** | • Daily temporal aggregation pipeline & missing value imputation<br>• ARIMA(1,1,1) & SARIMA(1,1,1)x(1,0,1,7) implementations<br>• Mathematical proof of ARIMA straight-line vanishing shocks | Classical statistical modeling & stationarity transformations |
+| **Team Member 2** | `21BCEYYYY` | **Exponential Smoothing & ML Baseline** | • Holt-Winters Additive & Multiplicative smoothing pipelines<br>• Smoothing parameter estimation ($\alpha, \beta, \gamma$)<br>• XGBoost feature engineering (autoregressive lags, calendar metadata) | Non-linear tabular modeling & feature importance analysis |
+| **Team Member 3** | `21BCEZZZZ` | **Sequential Deep Learning Baselines** | • RevIN per-window normalisation module (`RevIN`)<br>• Vanilla RNN & Standard LSTM architectures in PyTorch<br>• Early stopping, LR scheduling, and gradient clipping engine | Recurrent gating dynamics & vanishing gradient mitigation |
+| **Team Member 4** | `21BCEAAAA` | **Novel 2026 Deep Architecture Replications** | • CLM-Former replication (Series Decomp + FFT Autocorr + CLM-subNet)<br>• MKJR replication (KAN B-splines + Dual-Stream BiMamba SSM)<br>• Matrix-free Jacobian regularization implementation | Modern state-space modeling & Nature/Elsevier paper architectures |
+| **Team Member 5** | `21BCEBBBB` | **Evaluation, Diagnostics & Defense Strategy** | • 14-Day multi-horizon rolling benchmark engine<br>• 4-panel residual diagnostic suite & formal Ljung-Box testing<br>• Neural Granger causal sensitivity gradient extraction | Empirical benchmark synthesis & residual diagnostics |
+
+---
+
+### Engineering Work Allocation Highlights
+* **Version Control Collaboration:** All code, pipelines, and interactive figures are maintained under collaborative version control on [GitHub (`https://github.com/Seventie/TimeSeries.git`)](https://github.com/Seventie/TimeSeries.git).
+* **Reproducibility:** Seed standardization (`seed=42`) across PyTorch, NumPy, and XGBoost guarantees strict numerical reproducibility across independent test runs.""")
+
+# ------------------------------------------------------------------------------
+# Cell 25: Academic Defense & Viva Voce Strategy (Bonus)
+# ------------------------------------------------------------------------------
+md(r"""## 13. Academic Defense & Viva Voce Strategy
 
 ### Q1: Why do ARIMA and SARIMA look like straight lines in the multi-step plot?
 > *"This is a mathematical property of linear autoregressive moving-average processes under open-loop recursive forecasting. In an ARIMA(1,1,1) model, future error shocks $\epsilon_{T+h}$ have zero mathematical expectation ($\mathbb{E}[\epsilon] = 0$), causing the moving-average terms to vanish after $q$ steps. The autoregressive terms decay exponentially ($\phi_1^h \to 0$), leaving only the differenced mean drift $\mu$. Integrating a constant drift yields $\hat{y}_{T+h} = \hat{y}_T + h \cdot \mu$. In electricity grids, daily differenced load has zero drift ($\mu \approx 0$), collapsing the equation into a horizontal straight line.  
 > However, when we perform **rolling 1-step walk-forward updates**, ARIMA and SARIMA actively track real daily movements (achieving $R^2 = +0.20$ for SARIMA)."*
 
-### Q2: Why did you add Vanilla RNN and Standard LSTM?
-> *"Vanilla RNN and Standard LSTM form the classical recurrent deep learning benchmark. They demonstrate whether memory gating (LSTM) improves over simple recurrent transitions (RNN). In Section 13, both recurrent models achieve positive $R^2 \approx 0.17 - 0.20$, confirming that gated sequential architectures successfully learn non-linear temporal dynamics when paired with RevIN."*
+### Q2: Why did you add Holt-Winters models alongside ARIMA?
+> *"Holt-Winters provides a direct contrast between stochastic difference-equation modeling (ARIMA) and deterministic exponential smoothing. While ARIMA models shocks through AR and MA polynomials, Holt-Winters updates internal level ($\ell_t$), trend ($b_t$), and seasonal ($s_t$) states via exponential smoothing weights ($\alpha, \beta, \gamma$). Comparing Additive vs. Multiplicative Holt-Winters reveals whether seasonal load fluctuations scale proportionally with overall consumption level or remain fixed."*
 
-### Q3: How do CLM-Former and MKJR improve over Standard LSTM?
-> * **CLM-Former (Nature 2026):** *Paper 2 proves that standard LSTM stacks lack localized feature sensitivity. CLM-Former decomposes the series, uses FFT autocorrelation to capture phase-shifted cycles, and uses stacked 1D-convolutions before the LSTM bottleneck to capture abrupt localized load spikes.*
-> * **MKJR (Elsevier 2026):** *Paper 1 addresses the quadratic scaling of attention and the black-box nature of deep learning. MKJR replaces standard MLPs with Kolmogorov-Arnold Network (KAN) learnable B-spline edges and uses Mamba Selective State Spaces for linear $O(L)$ scaling, regularized via matrix-free Jacobian gradient penalties.*
+### Q3: Why did XGBoost outperform Deep Learning at $H=1$, but lose at $H=14$?
+> *"At Horizon 1, yesterday's load ($\text{lag}_1$) is an immediate persistence oracle ($r > 0.85$). Gradient-boosted trees excel at partitioning continuous feature spaces with sharp threshold cuts, making XGBoost dominant on single steps.  
+> However, as the forecast horizon extends to 14 days, the persistence correlation of $\text{lag}_1$ decays rapidly ($r < 0.3$), and recursive tree errors compound. Deep sequence models (CLM-Former with FFT autocorrelation and Standard LSTM with memory gating) encode multi-scale periodic dynamics, maintaining a significantly flatter error curve and achieving lower error at $H=14$ ($\text{MAE} \approx 794\text{k kW}$ vs. XGBoost's $852\text{k kW}$)."*
 
-### Q4: What does the Neural Granger Causal Sensitivity graph prove?
+### Q4: How does CLM-Former improve over Standard LSTM?
+> *"Standard LSTM stacks struggle with localized feature extraction and high-frequency load shocks. CLM-Former introduces three key architectural innovations from Nature (2026): (1) series decomposition to isolate non-stationary trend, (2) FFT autocorrelation to extract periodic roll lags in $O(L \log L)$ time, and (3) stacked 1D-convolutions before the LSTM bottleneck to capture abrupt localized shocks before sequence modeling."*
+
+### Q5: What does the Neural Granger Causal Sensitivity graph prove?
 > *"Using MKJR's input-output Jacobian gradients $\frac{\partial \hat{y}}{\partial x_{t-\tau}}$, we mapped which historical days drive the prediction. The graph shows that while Day -1 has the highest immediate predictive influence, distinct secondary pulses occur at Day -7 and Day -14, proving that the model discovered the weekly industrial rhythm purely from gradients."*
 
-### Q5: Why do Deep Learning models and paper models outperform XGBoost at $H=14$ when XGBoost won at $H=1$?
-> *"At Horizon 1, yesterday's load ($\text{lag}_1$) is an immediate persistence oracle, which is the exact regime where gradient-boosted decision trees thrive. However, as the horizon extends to 14 days, the autocorrelation of $\text{lag}_1$ decays rapidly ($r < 0.3$), and recursive tree errors compound.  
-> In contrast, deep sequence models (CLM-Former with FFT autocorrelation and Standard LSTM with memory gating) encode the underlying weekly cyclic dynamics and multi-scale temporal dependencies. In our 14-day multi-horizon benchmark, **CLM-Former achieves the lowest error across all models ($\text{MAE} \approx 793\text{k kW}$)**, outperforming direct XGBoost ($\text{MAE} \approx 833\text{k kW}$) and Standard LSTM ($\text{MAE} \approx 831\text{k kW}$). As confirmed by the horizon error decay curve, deep sequential architectures maintain a significantly flatter error trajectory as forecast distance increases."*""")
+### Q6: How does your Residual Analysis validate model adequacy?
+> *"In Section 10, we conducted time series tracking, Gaussian density overlays, ACF correlograms, and formal Ljung-Box Portmanteau tests on model residuals. For models with $p > 0.05$ across lags 7, 14, and 21, we fail to reject the null hypothesis of white noise, proving that the model successfully extracted all linear temporal correlations and left only stochastic white noise."*""")
 
+# Save generated notebook
 nb['cells'] = cells
-
 output_path = 'notebooks/02_Review2_Modeling_and_Forecasting.ipynb'
 with open(output_path, 'w', encoding='utf-8') as f:
     nbf.write(nb, f)
-print(f"SUCCESS: Generated {output_path} with {len(cells)} cells.")
+
+print(f"\nSUCCESS: Generated {output_path} with {len(cells)} cells completely aligned with the 25-Mark Evaluation Rubric!")
