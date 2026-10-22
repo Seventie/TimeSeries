@@ -4,7 +4,7 @@
 ---
 
 **Course / Review Identifier:** Review 1 & Review 2 Consolidated Submission  
-**Faculty Guide / Evaluator:** Prof. Sanhitha  
+**Faculty Guide / Evaluator:** Dr. Vandhana S  
 **Date of Submission:** October 2026  
 **Document Format:** 12-Page Comprehensive Technical Softcopy  
 **Official PDF Output:** [`docs/Review1_and_Review2_Comprehensive_Report.pdf`](./Review1_and_Review2_Comprehensive_Report.pdf) *(Compiled to Exactly 12 Pages, Monochrome Theme)*  
@@ -63,7 +63,7 @@ This comprehensive technical document bridges the exploratory analysis and stati
 ## Page 2: Review 1 Faculty Audit & Engineering Resolutions
 
 ### 1.1 Review 1 Faculty Feedback Analysis & Corrective Engineering
-Following the formal Review 1 defense, the evaluators, led by Prof. Sanhitha, highlighted four pivotal architectural and methodological requirements necessary for rigorous thesis-grade validation:
+Following the formal Review 1 defense, the evaluators, led by Dr. Vandhana S, highlighted four pivotal architectural and methodological requirements necessary for rigorous thesis-grade validation:
 
 | Faculty Comment / Critique | Vulnerability in Initial Setup | Engineering Action Implemented in Review 2 | Verification Evidence |
 | :--- | :--- | :--- | :--- |
