@@ -325,15 +325,27 @@ html_template = r"""<!DOCTYPE html>
       <div style="border-bottom: 2.5px solid #000000; padding-bottom: 5px; margin-bottom: 6px;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
           <div>
-            <span class="badge badge-black" style="margin-bottom: 3px;">ACADEMIC PROJECT TECHNICAL CASE STUDY</span>
+            <span class="badge badge-black" style="margin-bottom: 2px;">ACADEMIC PROJECT TECHNICAL CASE STUDY</span>
             <h1>SCALABLE TIME-SERIES ANALYSIS &amp; MULTI-HORIZON SMART GRID LOAD FORECASTING</h1>
             <div class="subtitle">Consolidated Review 1 Audit, Classical Benchmarks, and 2026 Deep SOTA Architectures (CLM-Former &amp; MKJR)</div>
           </div>
-          <div style="text-align: right; font-size: 7.2pt; color: #000000; font-weight: 600;">
-            <strong>Course Review:</strong> Review 1 &amp; Review 2 Consolidated<br>
+          <div style="text-align: right; font-size: 7.2pt; color: #000000; font-weight: 600; line-height: 1.35;">
+            <strong>Course:</strong> Time Series Analysis and Forecasting<br>
+            <strong>Review:</strong> Review 1 &amp; Review 2 Consolidated<br>
             <strong>Faculty Guide:</strong> Dr. Vandhana S<br>
             <strong>Date:</strong> October 2026
           </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom: 5px; padding: 3px 6px; border: 1px solid #000000; background: #f9f9f9;">
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 7.2pt;">
+          <div><strong style="text-transform: uppercase;">Team Members:</strong></div>
+          <div><strong>AC Sanhitha Reddy</strong> (cb.sc.u4cse23206)</div>
+          <div>&bull;</div>
+          <div><strong>Shaik Abdus Sattar</strong> (cb.sc.u4cse23245)</div>
+          <div>&bull;</div>
+          <div><strong>Shaik ibbraheem</strong> (cb.sc.u4cse23742)</div>
         </div>
       </div>
 

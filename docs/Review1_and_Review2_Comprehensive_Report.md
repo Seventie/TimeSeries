@@ -3,9 +3,16 @@
 
 ---
 
-**Course / Review Identifier:** Review 1 & Review 2 Consolidated Submission  
+**Course Name:** Time Series Analysis and Forecasting  
+**Course Review Identifier:** Review 1 & Review 2 Consolidated Submission  
 **Faculty Guide / Evaluator:** Dr. Vandhana S  
 **Date of Submission:** October 2026  
+
+### Student Authors & Team Registration
+- **AC Sanhitha Reddy** (cb.sc.u4cse23206)
+- **Shaik Abdus Sattar** (cb.sc.u4cse23245)
+- **Shaik ibbraheem** (cb.sc.u4cse23742)
+
 **Document Format:** 12-Page Comprehensive Technical Softcopy  
 **Official PDF Output:** [`docs/Review1_and_Review2_Comprehensive_Report.pdf`](./Review1_and_Review2_Comprehensive_Report.pdf) *(Compiled to Exactly 12 Pages, Monochrome Theme)*  
 **Official Interactive HTML Output:** [`docs/Review1_and_Review2_Comprehensive_Report.html`](./Review1_and_Review2_Comprehensive_Report.html)  
